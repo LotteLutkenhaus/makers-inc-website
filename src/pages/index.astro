@@ -50,24 +50,24 @@ const productPrice = product?.fields.price as number | undefined;
     </div>
   </section>
 
-  <!-- Nieuw hier? -->
-  <section class="nieuw-hier">
+  <!-- Callout cards -->
+  <section class="callout-section">
     <div class="container">
       <h2 class="section-title">Nieuw hier?</h2>
-      <div class="nieuw-cards">
+      <div class="callout-cards">
         <a
           href="/blog/naaien-voor-beginners-stap-voor-stap-tutorial-voor-een-etui/"
-          class="nieuw-card"
+          class="callout-card"
         >
-          <span class="nieuw-label">Gratis tutorial</span>
-          <h3 class="nieuw-card-title">Leer stap voor stap een etui naaien</h3>
-          <span class="nieuw-pill nieuw-pill--gratis">&#x2713; Gratis</span>
+          <span class="callout-label">Gratis tutorial</span>
+          <h3 class="callout-card-title">Leer stap voor stap een etui naaien</h3>
+          <span class="callout-pill callout-pill--gratis">&#x2713; Gratis</span>
         </a>
-        <a href="/shop/" class="nieuw-card">
-          <span class="nieuw-label">Naaipatroon</span>
-          <h3 class="nieuw-card-title">Maxi-wikkelrok: je eerste kledingstuk</h3>
+        <a href="/shop/" class="callout-card">
+          <span class="callout-label">Naaipatroon</span>
+          <h3 class="callout-card-title">Maxi-wikkelrok: je eerste kledingstuk</h3>
           {productPrice !== undefined && (
-            <span class="nieuw-pill nieuw-pill--price">&euro;{productPrice.toFixed(2)}</span>
+            <span class="callout-pill callout-pill--price">&euro;{productPrice.toFixed(2)}</span>
           )}
         </a>
       </div>
@@ -214,8 +214,8 @@ const productPrice = product?.fields.price as number | undefined;
     color: var(--color-primary);
   }
 
-  /* ── Nieuw hier? ── */
-  .nieuw-hier {
+  /* ── Callout cards ── */
+  .callout-section {
     background: var(--color-bg);
     padding: 4rem 0;
   }
@@ -228,13 +228,13 @@ const productPrice = product?.fields.price as number | undefined;
     margin-bottom: 2rem;
   }
 
-  .nieuw-cards {
+  .callout-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
 
-  .nieuw-card {
+  .callout-card {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -249,7 +249,7 @@ const productPrice = product?.fields.price as number | undefined;
     transition: transform 0.2s, box-shadow 0.2s;
   }
 
-  .nieuw-card::before {
+  .callout-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -262,16 +262,16 @@ const productPrice = product?.fields.price as number | undefined;
     transition: transform 0.25s ease;
   }
 
-  .nieuw-card:hover {
+  .callout-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
 
-  .nieuw-card:hover::before {
+  .callout-card:hover::before {
     transform: scaleX(1);
   }
 
-  .nieuw-label {
+  .callout-label {
     color: var(--color-accent);
     font-size: 0.75rem;
     font-weight: 700;
@@ -279,7 +279,7 @@ const productPrice = product?.fields.price as number | undefined;
     letter-spacing: 0.1em;
   }
 
-  .nieuw-card-title {
+  .callout-card-title {
     font-family: var(--font-heading);
     font-weight: 600;
     font-size: 1.2rem;
@@ -287,7 +287,7 @@ const productPrice = product?.fields.price as number | undefined;
     line-height: 1.3;
   }
 
-  .nieuw-pill {
+  .callout-pill {
     display: inline-block;
     align-self: flex-start;
     padding: 0.25rem 0.75rem;
@@ -296,12 +296,12 @@ const productPrice = product?.fields.price as number | undefined;
     font-weight: 600;
   }
 
-  .nieuw-pill--gratis {
+  .callout-pill--gratis {
     background: rgba(46, 87, 68, 0.12);
     color: var(--color-primary);
   }
 
-  .nieuw-pill--price {
+  .callout-pill--price {
     background: var(--color-bg);
     color: var(--color-primary);
     border: 1px solid var(--color-border);
@@ -327,7 +327,7 @@ const productPrice = product?.fields.price as number | undefined;
 
   /* ── Responsive ── */
   @media (max-width: 640px) {
-    .nieuw-cards {
+    .callout-cards {
       grid-template-columns: 1fr;
     }
   }
