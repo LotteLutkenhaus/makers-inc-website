@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getBlogPostsByCategory } from '../../lib/contentful';
+
+const posts = await getBlogPostsByCategory('Tips & Tricks');
+---
+
+<Layout title="Tips & Tricks">
+  <h1>Tips &amp; Tricks</h1>
+  <ul>
+    {posts.map((post) => (
+      <li>
+        <a href={`/blog/${post.fields.slug}/`}>
+          {post.fields.title}
+        </a>
+        <time>{post.fields.publishDate}</time>
+      </li>
+    ))}
+  </ul>
+</Layout>

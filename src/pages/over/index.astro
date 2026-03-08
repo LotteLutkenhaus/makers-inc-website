@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPersonEntry, getSiteInfo } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+const person = await getPersonEntry();
+const siteInfo = await getSiteInfo();
+---
+
+<Layout title="Over">
+  <h1>Over Makers Inc.</h1>
+
+  {person && (
+    <section>
+      <h2>{person.fields.name}</h2>
+      {person.fields.bio && (
+        <div set:html={renderMarkdown(person.fields.bio)} />
+      )}
+    </section>
+  )}
+
+  {siteInfo && siteInfo.fields.longerText && (
+    <section>
+      <div set:html={renderMarkdown(siteInfo.fields.longerText)} />
+    </section>
+  )}
+</Layout>

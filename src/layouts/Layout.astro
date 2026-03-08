@@ -1,0 +1,38 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | Makers Inc.</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="/beginners/">Beginners</a>
+      <a href="/tips-tricks/">Tips &amp; Tricks</a>
+      <a href="/shop/">Shop</a>
+      <a href="/over/">Over</a>
+      <a href="/story/">Story</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <p>&copy; Makers Inc.</p>
+      <a href="/privacyverklaring/">Privacyverklaring</a>
+      <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
+    </footer>
+  </body>
+</html>

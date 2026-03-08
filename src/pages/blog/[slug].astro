@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getBlogPosts } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({
+    params: { slug: post.fields.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const title = post.fields.title ?? '';
+const body = post.fields.body ?? '';
+const publishDate = post.fields.publishDate ?? '';
+const html = renderMarkdown(body);
+---
+
+<Layout title={title}>
+  <article>
+    <h1>{title}</h1>
+    <time datetime={publishDate}>{publishDate}</time>
+    <div set:html={html} />
+  </article>
+</Layout>
