@@ -46,7 +46,7 @@ const productPrice = product?.fields.price;
   <!-- Micro-intro strip -->
   <section class="intro">
     <div class="intro-inner">
-      <p>Naaien lijkt ingewikkeld — maar dat hoeft het niet te zijn. Op Makers Inc. vind je eerlijke tutorials, praktische tips en gratis patronen, speciaal geschreven voor beginners. Geen ingewikkeld jargon, gewoon lekker aan de slag.</p>
+      <p>Naaien lijkt ingewikkeld, maar dat hoeft het niet te zijn. Op Makers Inc. vind je <strong class="intro-emphasis">eerlijke tutorials, praktische tips en naaipatronen</strong>, speciaal geschreven voor beginners. Geen moeilijk jargon, gewoon lekker aan de slag!</p>
     </div>
   </section>
 
@@ -105,12 +105,12 @@ const productPrice = product?.fields.price;
     padding: 2rem 4rem 3.5rem 0;
   }
 
-  /* Align text with the container's left edge */
   .hero-text {
     width: 100%;
     max-width: calc((1160px / 2) - 2rem);
     margin-left: auto;
     padding-left: 2rem;
+    text-align: right;
   }
 
   .hero-title {
@@ -132,6 +132,7 @@ const productPrice = product?.fields.price;
 
   .hero-right {
     overflow: hidden;
+    position: relative;
   }
 
   .hero-photo {
@@ -142,33 +143,61 @@ const productPrice = product?.fields.price;
     display: block;
   }
 
-  /* ── Mobile hero ── */
+  /* ── Mobile hero: photo + overlay text ── */
   @media (max-width: 768px) {
     .hero {
       grid-template-columns: 1fr;
-      min-height: auto;
+      grid-template-rows: 1fr;
+      height: 56vh;
     }
 
+    /* Both children occupy the same cell, stacking on top of each other */
     .hero-right {
-      order: -1;
-      height: 55vh;
+      grid-row: 1;
+      grid-column: 1;
+      height: auto;
+    }
+
+    .hero-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.15) 55%,
+        transparent 80%
+      );
     }
 
     .hero-left {
-      padding: 2.5rem 1.5rem 3rem;
+      grid-row: 1;
+      grid-column: 1;
+      background: transparent;
+      align-self: end;
+      z-index: 1;
+      padding: 0 1.5rem 2.5rem;
     }
 
     .hero-text {
       max-width: 100%;
       margin-left: 0;
       padding-left: 0;
+      text-align: left;
     }
+
   }
 
   /* ── Micro-intro ── */
   .intro {
     background: var(--color-surface);
     padding: 3.5rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .intro {
+      padding-top: 2rem;
+    }
   }
 
   .intro-inner {
@@ -178,6 +207,11 @@ const productPrice = product?.fields.price;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text);
+  }
+
+  .intro-emphasis {
+    font-weight: 700;
+    color: var(--color-primary);
   }
 
   /* ── Nieuw hier? ── */
