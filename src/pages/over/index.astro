@@ -1,27 +1,136 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { getPersonEntry, getSiteInfo } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
 
 const person = await getPersonEntry();
 const siteInfo = await getSiteInfo();
+
+const personAsset = person?.fields.image as any;
+const personImageUrl: string | null = personAsset?.fields?.file?.url
+  ? `https:${personAsset.fields.file.url}`
+  : null;
 ---
 
-<Layout title="Over">
-  <h1>Over Makers Inc.</h1>
+<Layout title="Over Lotte">
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Over Lotte</h1>
+    </div>
+  </div>
 
   {person && (
-    <section>
-      <h2>{person.fields.name}</h2>
-      {person.fields.bio && (
-        <div set:html={renderMarkdown(person.fields.bio)} />
-      )}
+    <section class="person-section">
+      <div class="container person-layout">
+        <div class="person-photo-wrap">
+          {personImageUrl ? (
+            <Image
+              src={personImageUrl}
+              width={400}
+              height={500}
+              alt={person.fields.name}
+              class="person-photo"
+            />
+          ) : (
+            <div class="person-photo-placeholder"></div>
+          )}
+        </div>
+        <div class="person-bio">
+          <h2 class="person-name">{person.fields.name}</h2>
+          {person.fields.bio && (
+            <div class="person-bio-text" set:html={renderMarkdown(person.fields.bio)} />
+          )}
+        </div>
+      </div>
     </section>
   )}
 
-  {siteInfo && siteInfo.fields.longerText && (
-    <section>
-      <div set:html={renderMarkdown(siteInfo.fields.longerText)} />
+  {siteInfo?.fields.longerText && (
+    <section class="longer-text-section">
+      <div
+        class="longer-text-inner"
+        set:html={renderMarkdown(siteInfo.fields.longerText)}
+      />
     </section>
   )}
 </Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+  }
+
+  .person-section {
+    padding: 4rem 0;
+  }
+
+  .person-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .person-photo-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .person-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .person-photo-placeholder {
+    aspect-ratio: 4 / 5;
+    background: var(--color-border);
+    border-radius: 12px;
+  }
+
+  .person-name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+  }
+
+  .person-bio-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+  }
+
+  .longer-text-section {
+    padding: 0 2rem 4rem;
+  }
+
+  .longer-text-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .person-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .person-photo-wrap {
+      max-width: 280px;
+    }
+  }
+</style>

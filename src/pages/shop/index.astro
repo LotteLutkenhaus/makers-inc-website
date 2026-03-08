@@ -1,25 +1,135 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { getProduct } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
 
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
+
+const imageAsset = product?.fields.image as any;
+const imageUrl: string | null = imageAsset?.fields?.file?.url
+  ? `https:${imageAsset.fields.file.url}`
+  : null;
 ---
 
-<Layout title="Shop">
-  <h1>Shop</h1>
+<Layout title="Patronen">
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Patronen</h1>
+      <p class="page-desc"><em>Handgemaakte patronen voor zelfverzekerd naaien.</em></p>
+    </div>
+  </div>
+
   {product && (
-    <section>
-      <h2>{product.fields.name}</h2>
-      {product.fields.description && (
-        <div set:html={renderMarkdown(product.fields.description)} />
-      )}
-      {product.fields.price !== undefined && (
-        <p>Prijs: &euro;{product.fields.price}</p>
-      )}
-      {product.fields.stripePaymentLink && (
-        <a href={product.fields.stripePaymentLink}>Bestellen</a>
-      )}
+    <section class="product-section">
+      <div class="container product-layout">
+        <div class="product-image-wrap">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              width={600}
+              height={600}
+              alt={product.fields.name}
+              class="product-image"
+            />
+          ) : (
+            <div class="product-image-placeholder"></div>
+          )}
+        </div>
+        <div class="product-details">
+          <h2 class="product-name">{product.fields.name}</h2>
+          {product.fields.description && (
+            <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
+          )}
+          {product.fields.price !== undefined && (
+            <p class="product-price">&euro;{product.fields.price.toFixed(2)}</p>
+          )}
+          {product.fields.stripePaymentLink && (
+            <a href={product.fields.stripePaymentLink} class="btn-primary">Patroon kopen</a>
+          )}
+        </div>
+      </div>
     </section>
   )}
 </Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-desc {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .product-section {
+    padding: 4rem 0;
+  }
+
+  .product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .product-image-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product-image-placeholder {
+    aspect-ratio: 1;
+    background: var(--color-border);
+    border-radius: 12px;
+  }
+
+  .product-name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--color-primary);
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .product-desc {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    margin-bottom: 2rem;
+  }
+
+  .product-price {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .product-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>
