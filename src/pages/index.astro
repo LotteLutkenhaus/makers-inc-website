@@ -16,7 +16,7 @@ const heroImageUrl: string | null = heroAsset?.fields?.file?.url
 const heroNaturalWidth: number = heroAsset?.fields?.file?.details?.image?.width ?? 900;
 const heroNaturalHeight: number = heroAsset?.fields?.file?.details?.image?.height ?? 1200;
 
-const productPrice = product?.fields.price;
+const productPrice = product?.fields.price as number | undefined;
 ---
 
 <Layout title="Home">
@@ -60,12 +60,12 @@ const productPrice = product?.fields.price;
           class="nieuw-card"
         >
           <span class="nieuw-label">Gratis tutorial</span>
-          <h3 class="nieuw-card-title">Leer een etui naaien &mdash; stap voor stap</h3>
+          <h3 class="nieuw-card-title">Leer stap voor stap een etui naaien</h3>
           <span class="nieuw-pill nieuw-pill--gratis">&#x2713; Gratis</span>
         </a>
         <a href="/shop/" class="nieuw-card">
           <span class="nieuw-label">Naaipatroon</span>
-          <h3 class="nieuw-card-title">Maxi-wikkelrok &mdash; je eerste kledingstuk</h3>
+          <h3 class="nieuw-card-title">Maxi-wikkelrok: je eerste kledingstuk</h3>
           {productPrice !== undefined && (
             <span class="nieuw-pill nieuw-pill--price">&euro;{productPrice.toFixed(2)}</span>
           )}

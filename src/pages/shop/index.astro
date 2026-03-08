@@ -42,7 +42,7 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
             <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
           )}
           {product.fields.price !== undefined && (
-            <p class="product-price">&euro;{product.fields.price.toFixed(2)}</p>
+            <p class="product-price">&euro;{(product.fields.price as number).toFixed(2)}</p>
           )}
           {product.fields.stripePaymentLink && (
             <a href={product.fields.stripePaymentLink} class="btn-primary">Patroon kopen</a>
