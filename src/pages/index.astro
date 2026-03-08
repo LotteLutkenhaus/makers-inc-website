@@ -1,33 +1,47 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import BlogCard from '../components/BlogCard.astro';
-import { getBlogPosts, getSiteInfo, getProduct } from '../lib/contentful';
+import { Image } from 'astro:assets';
+import { getBlogPosts, getSiteInfoById, getProduct } from '../lib/contentful';
 
-const siteInfo = await getSiteInfo();
+const siteInfo = await getSiteInfoById('SYJXpMEX8IfUNLU5gBqae');
 const posts = await getBlogPosts();
 const recentPosts = posts.slice(0, 6);
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
 
-const heroAsset = siteInfo?.fields.heroImage as any;
+const heroAsset = siteInfo?.fields.frontPageImage as any;
 const heroImageUrl: string | null = heroAsset?.fields?.file?.url
   ? `https:${heroAsset.fields.file.url}`
   : null;
+const heroNaturalWidth: number = heroAsset?.fields?.file?.details?.image?.width ?? 900;
+const heroNaturalHeight: number = heroAsset?.fields?.file?.details?.image?.height ?? 1200;
 
 const productPrice = product?.fields.price;
 ---
 
 <Layout title="Home">
-  <!-- Cinematic hero -->
-  <section
-    class="hero"
-    style={heroImageUrl ? `background-image: url('${heroImageUrl}')` : ''}
-  >
-    <div class="hero-overlay"></div>
-    <div class="container hero-content">
-      <h1 class="hero-title">Hi! Ik ben Lotte.</h1>
-      <p class="hero-subtitle">Makers Inc. is mijn blog, waarin ik handige tips en tricks voor het naaien van kleding met je deel.</p>
+  <!-- Split hero: green panel left + photo right -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-text">
+        <h1 class="hero-title">Hi! Ik ben Lotte.</h1>
+        <p class="hero-subtitle">Makers Inc. is mijn blog, waarin ik handige tips en tricks voor het naaien van kleding met je deel.</p>
+      </div>
+    </div>
+    <div class="hero-right">
+      {heroImageUrl && (
+        <Image
+          src={heroImageUrl}
+          width={heroNaturalWidth}
+          height={heroNaturalHeight}
+          alt="Lotte achter de naaimachine"
+          class="hero-photo"
+          loading="eager"
+        />
+      )}
     </div>
   </section>
+
 
   <!-- Micro-intro strip -->
   <section class="intro">
@@ -79,49 +93,76 @@ const productPrice = product?.fields.price;
 <style>
   /* ── Hero ── */
   .hero {
-    position: relative;
-    min-height: 70vh;
-    background-color: var(--color-primary);
-    background-size: cover;
-    background-position: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: min(640px, 72vh);
+  }
+
+  .hero-left {
+    background: var(--color-primary);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    padding: 2rem 4rem 3.5rem 0;
   }
 
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.3) 55%,
-      transparent 100%
-    );
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 600px;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+  /* Align text with the container's left edge */
+  .hero-text {
+    width: 100%;
+    max-width: calc((1160px / 2) - 2rem);
+    margin-left: auto;
+    padding-left: 2rem;
   }
 
   .hero-title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 4vw, 3.5rem);
     color: #fff;
-    line-height: 1.1;
+    line-height: 1.15;
     margin-bottom: 1.25rem;
   }
 
   .hero-subtitle {
     font-family: var(--font-heading);
     font-style: italic;
-    font-size: clamp(1rem, 2.5vw, 1.35rem);
-    color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.6;
+  }
+
+  .hero-right {
+    overflow: hidden;
+  }
+
+  .hero-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ── Mobile hero ── */
+  @media (max-width: 768px) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-right {
+      order: -1;
+      height: 55vh;
+    }
+
+    .hero-left {
+      padding: 2.5rem 1.5rem 3rem;
+    }
+
+    .hero-text {
+      max-width: 100%;
+      margin-left: 0;
+      padding-left: 0;
+    }
   }
 
   /* ── Micro-intro ── */
@@ -254,10 +295,6 @@ const productPrice = product?.fields.price;
   @media (max-width: 640px) {
     .nieuw-cards {
       grid-template-columns: 1fr;
-    }
-
-    .hero {
-      min-height: 55vh;
     }
   }
 

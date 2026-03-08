@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { Image } from 'astro:assets';
+import { getSiteInfoById } from '../lib/contentful';
 
 interface Props {
   title: string;
@@ -12,6 +14,14 @@ function isActive(href: string): boolean {
   if (href === '/') return pathname === '/';
   return pathname.startsWith(href);
 }
+
+const siteInfo = await getSiteInfoById('SYJXpMEX8IfUNLU5gBqae');
+const logoAsset = siteInfo?.fields.logoWide as any;
+const logoUrl: string | null = logoAsset?.fields?.file?.url
+  ? `https:${logoAsset.fields.file.url}`
+  : null;
+const logoWidth: number = logoAsset?.fields?.file?.details?.image?.width ?? 200;
+const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60;
 ---
 
 <!doctype html>
@@ -24,7 +34,19 @@ function isActive(href: string): boolean {
   <body>
     <header class="site-nav">
       <div class="container nav-inner">
-        <a href="/" class="nav-logo">🧵 Makers Inc.</a>
+        <a href="/" class="nav-logo">
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              width={logoWidth}
+              height={logoHeight}
+              alt="Makers Inc."
+              class="nav-logo-image"
+            />
+          ) : (
+            <span>🧵 Makers Inc.</span>
+          )}
+        </a>
         <nav class="nav-links" aria-label="Hoofdnavigatie">
           <a href="/beginners/" class:list={['nav-link', { 'nav-link--active': isActive('/beginners/') }]}>Voor beginners</a>
           <a href="/tips-tricks/" class:list={['nav-link', { 'nav-link--active': isActive('/tips-tricks/') }]}>Tips &amp; Tricks</a>
@@ -61,7 +83,19 @@ function isActive(href: string): boolean {
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <a href="/" class="footer-logo">🧵 Makers Inc.</a>
+        <a href="/" class="footer-logo">
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              width={logoWidth}
+              height={logoHeight}
+              alt="Makers Inc."
+              class="footer-logo-image"
+            />
+          ) : (
+            <span>🧵 Makers Inc.</span>
+          )}
+        </a>
         <nav class="footer-nav" aria-label="Footernavigatie">
           <a href="/beginners/">Voor beginners</a>
           <a href="/tips-tricks/">Tips &amp; Tricks</a>
@@ -76,6 +110,14 @@ function isActive(href: string): boolean {
     </footer>
 
     <script>
+      // Inverted nav on load → solid green on scroll
+      const siteNav = document.querySelector('.site-nav');
+      function updateNav() {
+        siteNav?.classList.toggle('site-nav--light', window.scrollY < 10);
+      }
+      window.addEventListener('scroll', updateNav, { passive: true });
+      updateNav();
+
       const hamburger = document.getElementById('nav-hamburger');
       const overlay = document.getElementById('nav-overlay');
       const closeBtn = document.getElementById('nav-overlay-close');
@@ -104,6 +146,12 @@ function isActive(href: string): boolean {
         z-index: 100;
         background: var(--color-primary);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: background 0.35s ease, box-shadow 0.35s ease;
+      }
+
+      .site-nav--light {
+        background: var(--color-bg);
+        box-shadow: 0 1px 0 var(--color-border);
       }
 
       .nav-inner {
@@ -120,7 +168,17 @@ function isActive(href: string): boolean {
         text-decoration: none;
         letter-spacing: 0.02em;
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
       }
+
+      .nav-logo-image {
+        height: 48px;
+        width: auto;
+        display: block;
+        transition: filter 0.35s ease;
+      }
+
 
       .nav-links {
         display: flex;
@@ -142,6 +200,15 @@ function isActive(href: string): boolean {
         color: var(--color-accent);
       }
 
+      .site-nav--light .nav-link {
+        color: var(--color-primary);
+      }
+
+      .site-nav--light .nav-link:hover,
+      .site-nav--light .nav-link--active {
+        color: var(--color-accent);
+      }
+
       .nav-hamburger {
         display: none;
         flex-direction: column;
@@ -158,6 +225,11 @@ function isActive(href: string): boolean {
         height: 2px;
         background: #fff;
         border-radius: 2px;
+        transition: background 0.35s ease;
+      }
+
+      .site-nav--light .nav-hamburger span {
+        background: var(--color-primary);
       }
 
       /* ── Mobile overlay ── */
@@ -230,6 +302,14 @@ function isActive(href: string): boolean {
         font-size: 1.2rem;
         color: #fff;
         text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .footer-logo-image {
+        height: 32px;
+        width: auto;
+        display: block;
       }
 
       .footer-nav {
