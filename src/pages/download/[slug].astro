@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getDownloads } from '../../lib/contentful';
+
+export async function getStaticPaths() {
+  const downloads = await getDownloads();
+  return downloads.map((dl) => ({
+    params: { slug: dl.fields.slug },
+    props: { download: dl },
+  }));
+}
+
+const { download } = Astro.props;
+const title = download.fields.title ?? '';
+const description = download.fields.description ?? '';
+const file = download.fields.file as any;
+const fileUrl = file?.fields?.file?.url ?? '#';
+const fullFileUrl = fileUrl.startsWith('//') ? `https:${fileUrl}` : fileUrl;
+---
+
+<Layout title={title}>
+  <h1>{title}</h1>
+  {description && <p>{description}</p>}
+  <a href={fullFileUrl} download>Download {title}</a>
+</Layout>

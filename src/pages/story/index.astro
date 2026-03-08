@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getStoryEntries } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+const entries = await getStoryEntries();
+---
+
+<Layout title="Story">
+  <h1>Het verhaal van Makers Inc.</h1>
+  {entries.map((entry) => (
+    <section>
+      <h2>{entry.fields.title}</h2>
+      <time>{entry.fields.date}</time>
+      <div set:html={renderMarkdown(entry.fields.body ?? '')} />
+    </section>
+  ))}
+</Layout>

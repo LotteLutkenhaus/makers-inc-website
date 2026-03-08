@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getLegalInformation } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+const legal = await getLegalInformation('Privacyverklaring');
+---
+
+<Layout title="Privacyverklaring">
+  {legal ? (
+    <article>
+      <h1>{legal.fields.title}</h1>
+      <div set:html={renderMarkdown(legal.fields.content ?? '')} />
+    </article>
+  ) : (
+    <h1>Privacyverklaring</h1>
+  )}
+</Layout>

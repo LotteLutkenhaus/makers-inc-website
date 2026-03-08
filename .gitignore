@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # Pycharm
 .idea/
+
+# Astro
+.astro/

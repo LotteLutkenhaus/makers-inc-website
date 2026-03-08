@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getProduct } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+const product = await getProduct('naaipatroon-maxi-wikkelrok');
+---
+
+<Layout title="Shop">
+  <h1>Shop</h1>
+  {product && (
+    <section>
+      <h2>{product.fields.name}</h2>
+      {product.fields.description && (
+        <div set:html={renderMarkdown(product.fields.description)} />
+      )}
+      {product.fields.price !== undefined && (
+        <p>Prijs: &euro;{product.fields.price}</p>
+      )}
+      {product.fields.stripePaymentLink && (
+        <a href={product.fields.stripePaymentLink}>Bestellen</a>
+      )}
+    </section>
+  )}
+</Layout>

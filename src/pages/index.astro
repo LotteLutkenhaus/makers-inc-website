@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getBlogPosts, getSiteInfo } from '../lib/contentful';
+
+const siteInfo = await getSiteInfo();
+const posts = await getBlogPosts();
+---
+
+<Layout title="Home">
+  {siteInfo && (
+    <section>
+      <h1>{siteInfo.fields.siteName}</h1>
+      {siteInfo.fields.heroText && <p>{siteInfo.fields.heroText}</p>}
+    </section>
+  )}
+
+  <section>
+    <h2>Recente blogposts</h2>
+    <ul>
+      {posts.map((post) => (
+        <li>
+          <a href={`/blog/${post.fields.slug}/`}>
+            {post.fields.title}
+          </a>
+          <time>{post.fields.publishDate}</time>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
