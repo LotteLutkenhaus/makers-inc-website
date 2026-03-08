@@ -3,6 +3,35 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="Contact">
-  <h1>Contact</h1>
-  <p>Neem contact op met Makers Inc. via e-mail of sociale media.</p>
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Contact</h1>
+    </div>
+  </div>
+
+  <div class="page-content container">
+    <p>Neem contact op met Makers Inc. via e-mail of sociale media.</p>
+  </div>
 </Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+  }
+
+  .page-content {
+    max-width: 680px;
+    margin: 4rem auto;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+</style>

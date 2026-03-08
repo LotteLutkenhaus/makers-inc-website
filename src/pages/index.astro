@@ -1,30 +1,348 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getBlogPosts, getSiteInfo } from '../lib/contentful';
+import BlogCard from '../components/BlogCard.astro';
+import { Image } from 'astro:assets';
+import { getBlogPosts, getSiteInfoById, getProduct } from '../lib/contentful';
 
-const siteInfo = await getSiteInfo();
+const siteInfo = await getSiteInfoById('SYJXpMEX8IfUNLU5gBqae');
 const posts = await getBlogPosts();
+const recentPosts = posts.slice(0, 6);
+const product = await getProduct('naaipatroon-maxi-wikkelrok');
+
+const heroAsset = siteInfo?.fields.frontPageImage as any;
+const heroImageUrl: string | null = heroAsset?.fields?.file?.url
+  ? `https:${heroAsset.fields.file.url}`
+  : null;
+const heroNaturalWidth: number = heroAsset?.fields?.file?.details?.image?.width ?? 900;
+const heroNaturalHeight: number = heroAsset?.fields?.file?.details?.image?.height ?? 1200;
+
+const productPrice = product?.fields.price as number | undefined;
 ---
 
 <Layout title="Home">
-  {siteInfo && (
-    <section>
-      <h1>{siteInfo.fields.siteName}</h1>
-      {siteInfo.fields.heroText && <p>{siteInfo.fields.heroText}</p>}
-    </section>
-  )}
+  <!-- Split hero: green panel left + photo right -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-text">
+        <h1 class="hero-title">Hi! Ik ben Lotte.</h1>
+        <p class="hero-subtitle">Makers Inc. is mijn blog, waarin ik handige tips en tricks voor het naaien van kleding met je deel.</p>
+      </div>
+    </div>
+    <div class="hero-right">
+      {heroImageUrl && (
+        <Image
+          src={heroImageUrl}
+          width={heroNaturalWidth}
+          height={heroNaturalHeight}
+          alt="Lotte achter de naaimachine"
+          class="hero-photo"
+          loading="eager"
+        />
+      )}
+    </div>
+  </section>
 
-  <section>
-    <h2>Recente blogposts</h2>
-    <ul>
-      {posts.map((post) => (
-        <li>
-          <a href={`/blog/${post.fields.slug}/`}>
-            {post.fields.title}
-          </a>
-          <time>{post.fields.publishDate}</time>
-        </li>
-      ))}
-    </ul>
+
+  <!-- Micro-intro strip -->
+  <section class="intro">
+    <div class="intro-inner">
+      <p>Naaien lijkt ingewikkeld, maar dat hoeft het niet te zijn. Op Makers Inc. vind je <strong class="intro-emphasis">eerlijke tutorials, praktische tips en naaipatronen</strong>, speciaal geschreven voor beginners. Geen moeilijk jargon, gewoon lekker aan de slag!</p>
+    </div>
+  </section>
+
+  <!-- Callout cards -->
+  <section class="callout-section">
+    <div class="container">
+      <h2 class="section-title">Nieuw hier?</h2>
+      <div class="callout-cards">
+        <a
+          href="/blog/naaien-voor-beginners-stap-voor-stap-tutorial-voor-een-etui/"
+          class="callout-card"
+        >
+          <span class="callout-label">Gratis tutorial</span>
+          <h3 class="callout-card-title">Leer stap voor stap een etui naaien</h3>
+          <p class="callout-card-body">Perfect beginnersproject! En: je leert op een makkelijke manier een rits in te zetten.</p>
+          <span class="callout-pill callout-pill--gratis">&#x2713; Gratis</span>
+        </a>
+        <a href="/shop/" class="callout-card">
+          <span class="callout-label">Naaipatroon</span>
+          <h3 class="callout-card-title">Maxi-wikkelrok: je eerste kledingstuk</h3>
+          <p class="callout-card-body">Eenvoudig in elkaar te zetten, met een maximaal zwierig resultaat!</p>
+          {productPrice !== undefined && (
+            <span class="callout-pill callout-pill--price">&euro;{productPrice.toFixed(2)}</span>
+          )}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recente blogposts -->
+  <section class="recent-posts">
+    <div class="container">
+      <h2 class="section-title">Recente blogposts</h2>
+      <div class="posts-grid">
+        {recentPosts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+      <div class="posts-cta">
+        <a href="/beginners/" class="btn-outline">Alle blogposts bekijken &rarr;</a>
+      </div>
+    </div>
   </section>
 </Layout>
+
+<style>
+  /* ── Hero ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: min(640px, 72vh);
+  }
+
+  .hero-left {
+    background: var(--color-primary);
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem 4rem 3.5rem 0;
+  }
+
+  .hero-text {
+    width: 100%;
+    max-width: calc((1160px / 2) - 2rem);
+    margin-left: auto;
+    padding-left: 2rem;
+    text-align: right;
+  }
+
+  .hero-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+  }
+
+  .hero-right {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ── Mobile hero: photo + overlay text ── */
+  @media (max-width: 768px) {
+    .hero {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      height: 56vh;
+    }
+
+    /* Both children occupy the same cell, stacking on top of each other */
+    .hero-right {
+      grid-row: 1;
+      grid-column: 1;
+      height: auto;
+    }
+
+    .hero-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.15) 55%,
+        transparent 80%
+      );
+    }
+
+    .hero-left {
+      grid-row: 1;
+      grid-column: 1;
+      background: transparent;
+      align-self: end;
+      z-index: 1;
+      padding: 0 1.5rem 2.5rem;
+    }
+
+    .hero-text {
+      max-width: 100%;
+      margin-left: 0;
+      padding-left: 0;
+      text-align: left;
+    }
+
+  }
+
+  /* ── Micro-intro ── */
+  .intro {
+    background: var(--color-surface);
+    padding: 3.5rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .intro {
+      padding-top: 2rem;
+    }
+  }
+
+  .intro-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .intro-emphasis {
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  /* ── Callout cards ── */
+  .callout-section {
+    background: var(--color-bg);
+    padding: 4rem 0;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    margin-bottom: 2rem;
+  }
+
+  .callout-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .callout-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 2rem;
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .callout-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+
+  .callout-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .callout-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .callout-label {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .callout-card-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--color-primary);
+    line-height: 1.3;
+  }
+
+  .callout-card-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    flex-grow: 1;
+  }
+
+  .callout-pill {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .callout-pill--gratis,
+  .callout-pill--price {
+    background: rgba(46, 87, 68, 0.12);
+    color: var(--color-primary);
+  }
+
+  /* ── Recente blogposts ── */
+  .recent-posts {
+    padding: 4rem 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .posts-cta {
+    text-align: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .callout-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .posts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -43,6 +43,8 @@ export interface SiteInfoFields {
   heroText?: string;
   longerText?: string;
   heroImage?: any;
+  frontPageImage?: any;
+  logoWide?: any;
 }
 
 export interface StoryEntryFields {
@@ -197,6 +199,11 @@ export async function getSiteInfo() {
     locale: LOCALE,
   });
   return entries.items[0] ?? null;
+}
+
+export async function getSiteInfoById(id: string) {
+  const entry = await client.getEntry<SiteInfoSkeleton>(id, { locale: LOCALE } as any);
+  return entry ?? null;
 }
 
 export async function getProduct(slug: string) {
