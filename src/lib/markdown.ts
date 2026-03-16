@@ -1,6 +1,7 @@
 import { Marked } from 'marked';
 
 const marked = new Marked({
+  breaks: true,
   renderer: {
     link({ href, title, text }) {
       const titleAttr = title ? ` title="${title}"` : '';

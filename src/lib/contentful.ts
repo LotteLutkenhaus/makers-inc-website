@@ -34,7 +34,7 @@ export interface BlogTypeFields {
 
 export interface PersonFields {
   name: string;
-  bio?: string;
+  shortBio?: string;
   image?: any;
 }
 

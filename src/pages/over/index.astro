@@ -1,136 +1,143 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getPersonEntry, getSiteInfo } from '../../lib/contentful';
+import { getPersonEntry } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
 
 const person = await getPersonEntry();
-const siteInfo = await getSiteInfo();
 
 const personAsset = person?.fields.image as any;
 const personImageUrl: string | null = personAsset?.fields?.file?.url
   ? `https:${personAsset.fields.file.url}`
   : null;
+
+const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : '';
 ---
 
-<Layout title="Over Lotte">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Over Lotte</h1>
-    </div>
-  </div>
-
-  {person && (
-    <section class="person-section">
-      <div class="container person-layout">
-        <div class="person-photo-wrap">
-          {personImageUrl ? (
-            <Image
-              src={personImageUrl}
-              width={400}
-              height={500}
-              alt={person.fields.name}
-              class="person-photo"
-            />
-          ) : (
-            <div class="person-photo-placeholder"></div>
-          )}
-        </div>
-        <div class="person-bio">
-          <h2 class="person-name">{person.fields.name}</h2>
-          {person.fields.bio && (
-            <div class="person-bio-text" set:html={renderMarkdown(person.fields.bio)} />
-          )}
-        </div>
+<Layout title="Over mij">
+  <article class="over-page">
+    {personImageUrl && (
+      <div class="post-hero">
+        <Image
+          src={personImageUrl}
+          width={860}
+          height={573}
+          alt={person!.fields.name}
+          class="post-hero-image"
+          loading="eager"
+        />
       </div>
-    </section>
-  )}
+    )}
 
-  {siteInfo?.fields.longerText && (
-    <section class="longer-text-section">
-      <div
-        class="longer-text-inner"
-        set:html={renderMarkdown(siteInfo.fields.longerText)}
-      />
-    </section>
-  )}
+    <div class="post-header">
+      <h1 class="post-title">{person?.fields.name ?? 'Over mij'}</h1>
+    </div>
+
+    {html && (
+      <div class="post-body" set:html={html} />
+    )}
+  </article>
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 4rem 0;
+  .over-page {
+    padding-bottom: 4rem;
   }
 
-  .page-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #fff;
-  }
-
-  .person-section {
-    padding: 4rem 0;
-  }
-
-  .person-layout {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-
-  .person-photo-wrap {
-    border-radius: 12px;
+  .post-hero {
+    max-width: 860px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
+    border-radius: 8px;
   }
 
-  .person-photo {
+  .post-hero-image {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
+    border-radius: 8px;
   }
 
-  .person-photo-placeholder {
-    aspect-ratio: 4 / 5;
-    background: var(--color-border);
-    border-radius: 12px;
-  }
-
-  .person-name {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 1.5rem;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-  }
-
-  .person-bio-text {
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--color-text);
-  }
-
-  .longer-text-section {
-    padding: 0 2rem 4rem;
-  }
-
-  .longer-text-inner {
+  .post-header {
     max-width: 680px;
-    margin: 0 auto;
-    font-size: 1.05rem;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem;
+  }
+
+  .post-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--color-primary);
+    line-height: 1.2;
+  }
+
+  .post-body {
+    max-width: 680px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+    font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text);
   }
 
-  @media (max-width: 768px) {
-    .person-layout {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
+  .post-body :global(p) {
+    margin-bottom: 1.5rem;
+  }
 
-    .person-photo-wrap {
-      max-width: 280px;
+  .post-body :global(h2) {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.6rem;
+    color: var(--color-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-body :global(h3) {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-body :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .post-body :global(strong) {
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .post-body :global(ul),
+  .post-body :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-body :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .post-hero {
+      margin-top: 1.5rem;
+      padding: 0;
+      border-radius: 0;
+    }
+    .post-hero-image {
+      border-radius: 0;
     }
   }
 </style>
