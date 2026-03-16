@@ -32,7 +32,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     <title>{title} | Makers Inc.</title>
   </head>
   <body>
-    <header class="site-nav">
+    <header class="site-nav" data-inverted={pathname === '/' ? 'true' : 'false'}>
       <div class="container nav-inner">
         <a href="/" class="nav-logo">
           {logoUrl ? (
@@ -97,10 +97,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
           )}
         </a>
         <nav class="footer-nav" aria-label="Footernavigatie">
-          <a href="/beginners/">Voor beginners</a>
-          <a href="/tips-tricks/">Tips &amp; Tricks</a>
-          <a href="/shop/">Patronen</a>
-          <a href="/over/">Over mij</a>
+          <a href="/over/">Over</a>
           <a href="/contact/">Contact</a>
           <a href="/privacyverklaring/">Privacyverklaring</a>
           <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
@@ -110,9 +107,11 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     </footer>
 
     <script>
-      // Inverted nav on load → solid green on scroll
-      const siteNav = document.querySelector('.site-nav');
+      // Inverted nav on load → solid green on scroll (homepage only)
+      const siteNav = document.querySelector<HTMLElement>('.site-nav');
+      const isHomepage = siteNav?.dataset.inverted === 'true';
       function updateNav() {
+        if (!isHomepage) return;
         siteNav?.classList.toggle('site-nav--light', window.scrollY < 10);
       }
       window.addEventListener('scroll', updateNav, { passive: true });

@@ -9,19 +9,20 @@ interface Props {
     fields: {
       title: string;
       heroImage?: unknown;
-      category?: unknown[];
+      blogCategory?: unknown[];
       body: string;
     };
   };
 }
 
 const { post } = Astro.props;
-const { title, heroImage, category, body } = post.fields;
+const { title, heroImage, blogCategory, body } = post.fields;
 
 const html = renderMarkdown(body ?? '');
 
-const categories = category as any[] | undefined;
-const categoryName: string = categories?.[0]?.fields?.name ?? '';
+const raw = blogCategory as any;
+const categories: any[] = raw ? (Array.isArray(raw) ? raw : [raw]) : [];
+const categoryName: string = categories[0]?.fields?.category ?? '';
 
 function categoryHref(name: string): string {
   if (name === 'Alles voor beginners') return '/beginners/';
@@ -65,7 +66,7 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
     <div class="post-body container" set:html={html} />
 
     <div class="post-donation">
-      <a href={donationUrl} class="btn-primary">Vind je dit artikel waardevol? Trakteer me op een koffie ☕</a>
+      <a href={donationUrl} class="btn-primary">Leuk blog? Doneer ❤</a>
     </div>
   </article>
 </Layout>
@@ -76,9 +77,12 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
   }
 
   .post-hero {
-    width: 100%;
-    max-height: 520px;
+    max-width: 860px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
+    border-radius: 8px;
   }
 
   .post-hero-image {
@@ -86,6 +90,7 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 8px;
   }
 
   .post-header {
@@ -200,6 +205,22 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
     margin-bottom: 0.5rem;
   }
 
+  /* ── YouTube embeds ── */
+  .post-body :global(.youtube-embed) {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .post-body :global(.youtube-embed iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
   /* ── Donation ── */
   .post-donation {
     text-align: center;
@@ -209,7 +230,12 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .post-hero {
-      max-height: 260px;
+      margin-top: 1.5rem;
+      padding: 0;
+      border-radius: 0;
+    }
+    .post-hero-image {
+      border-radius: 0;
     }
   }
 </style>
