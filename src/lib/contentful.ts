@@ -17,13 +17,13 @@ export interface BlogPostFields {
   publishDate: string;
   heroImage?: any;
   description?: string;
-  category?: Entry<BlogCategorySkeleton>[];
+  blogCategory?: Entry<BlogCategorySkeleton> | Entry<BlogCategorySkeleton>[];
   type?: Entry<BlogTypeSkeleton>[];
   author?: Entry<PersonSkeleton>;
 }
 
 export interface BlogCategoryFields {
-  name: string;
+  category: string;
   slug: string;
 }
 
@@ -34,7 +34,7 @@ export interface BlogTypeFields {
 
 export interface PersonFields {
   name: string;
-  bio?: string;
+  shortBio?: string;
   image?: any;
 }
 
@@ -43,6 +43,8 @@ export interface SiteInfoFields {
   heroText?: string;
   longerText?: string;
   heroImage?: any;
+  frontPageImage?: any;
+  logoWide?: any;
 }
 
 export interface StoryEntryFields {
@@ -168,9 +170,10 @@ export async function getBlogPost(slug: string) {
 export async function getBlogPostsByCategory(categoryName: string) {
   const posts = await getBlogPosts();
   return posts.filter((post) => {
-    const categories = post.fields.category as any[] | undefined;
-    if (!categories) return false;
-    return categories.some((cat: any) => cat.fields?.name === categoryName);
+    const raw = post.fields.blogCategory;
+    if (!raw) return false;
+    const categories: any[] = Array.isArray(raw) ? raw : [raw];
+    return categories.some((cat: any) => cat.fields?.category === categoryName);
   });
 }
 
@@ -197,6 +200,11 @@ export async function getSiteInfo() {
     locale: LOCALE,
   });
   return entries.items[0] ?? null;
+}
+
+export async function getSiteInfoById(id: string) {
+  const entry = await client.getEntry<SiteInfoSkeleton>(id, { locale: LOCALE } as any);
+  return entry ?? null;
 }
 
 export async function getProduct(slug: string) {

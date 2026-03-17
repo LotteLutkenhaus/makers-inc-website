@@ -8,4 +8,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   integrations: [sitemap()],
+  image: {
+    domains: ['images.ctfassets.net'],
+  },
 });

@@ -6,13 +6,64 @@ import { renderMarkdown } from '../../lib/markdown';
 const entries = await getStoryEntries();
 ---
 
-<Layout title="Story">
-  <h1>Het verhaal van Makers Inc.</h1>
-  {entries.map((entry) => (
-    <section>
-      <h2>{entry.fields.title}</h2>
-      <time>{entry.fields.date}</time>
-      <div set:html={renderMarkdown(entry.fields.body ?? '')} />
-    </section>
-  ))}
+<Layout title="Het verhaal van Makers Inc.">
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Het verhaal van Makers Inc.</h1>
+    </div>
+  </div>
+
+  <div class="page-content container">
+    {entries.map((entry) => (
+      <article class="story-entry">
+        <h2 class="story-entry-title">{entry.fields.title}</h2>
+        <time class="story-entry-date" datetime={entry.fields.date}>{entry.fields.date}</time>
+        <div class="story-entry-body" set:html={renderMarkdown(entry.fields.body ?? '')} />
+      </article>
+    ))}
+  </div>
 </Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+  }
+
+  .page-content {
+    max-width: 680px;
+    margin: 4rem auto;
+  }
+
+  .story-entry {
+    margin-bottom: 3rem;
+  }
+
+  .story-entry-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .story-entry-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .story-entry-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+</style>

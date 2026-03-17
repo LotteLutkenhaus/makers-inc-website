@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Nunito:wght@400;500;600;700&family=Unica+One&display=swap');
+
+:root {
+  --color-primary:  #2E5744;
+  --color-accent:   #E68F72;
+  --color-bg:       #FDFAF7;
+  --color-surface:  #FFFFFF;
+  --color-muted:    #7A8896;
+  --color-border:   #E8E2DC;
+  --color-text:     #1A1A1A;
+
+  --font-logo:    'Unica One', sans-serif;
+  --font-heading: 'Fraunces', serif;
+  --font-body:    'Nunito', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-primary:hover {
+  background: #cf7a5d;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  border: 2px solid var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.btn-outline:hover {
+  background: var(--color-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}

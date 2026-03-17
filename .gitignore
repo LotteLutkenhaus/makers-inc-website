@@ -141,6 +141,7 @@ vite.config.ts.timestamp-*
 # Pycharm
 .idea/
 CLAUDE.md
+.claude/
 
 # Astro
 .astro/

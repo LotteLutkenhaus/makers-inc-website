@@ -1,20 +1,70 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import BlogCard from '../../components/BlogCard.astro';
 import { getBlogPostsByCategory } from '../../lib/contentful';
 
 const posts = await getBlogPostsByCategory('Alles voor beginners');
 ---
 
 <Layout title="Alles voor beginners">
-  <h1>Alles voor beginners</h1>
-  <ul>
-    {posts.map((post) => (
-      <li>
-        <a href={`/blog/${post.fields.slug}/`}>
-          {post.fields.title}
-        </a>
-        <time>{post.fields.publishDate}</time>
-      </li>
-    ))}
-  </ul>
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Alles voor beginners</h1>
+      <p class="page-desc"><em>Hier zijn alle blogs verzameld met de beste info voor beginnende naaiers. Van het uitzoeken van een naaimachine tot de leukste beginnersprojecten: hier vind je alles!</em></p>
+    </div>
+  </div>
+
+  <section class="posts-section">
+    <div class="container">
+      <div class="posts-grid">
+        {posts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-desc {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .posts-section {
+    padding: 4rem 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .posts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
