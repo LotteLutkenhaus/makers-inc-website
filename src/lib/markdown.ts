@@ -12,7 +12,7 @@ const marked = new Marked({
       // Add rel="nofollow sponsored" to Bol.com affiliate links
       // TODO: Add other affiliates
       if (href && href.includes('partner.bol.com')) {
-        return `<a href="${href}"${titleAttr} rel="nofollow sponsored">${text}</a>`;
+        return `<a href="${href}"${titleAttr} rel="nofollow sponsored" target="_blank">${text}</a>`;
       }
       return `<a href="${href}"${titleAttr}>${text}</a>`;
     },

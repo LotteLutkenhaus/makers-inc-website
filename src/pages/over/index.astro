@@ -22,7 +22,7 @@ const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : 
           src={personImageUrl}
           width={860}
           height={573}
-          alt={person!.fields.name}
+          alt={person?.fields.name ?? 'Makers Inc.'}
           class="post-hero-image"
           loading="eager"
         />
