@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import Layout from './Layout.astro';
 import { renderMarkdown } from '../lib/markdown';
-import { getProduct } from '../lib/contentful';
 
 interface Props {
   post: {
@@ -38,8 +37,6 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
   ? `https:${imageAsset.fields.file.url}`
   : null;
 
-const product = await getProduct('naaipatroon-maxi-wikkelrok');
-const donationUrl = product?.fields.stripePaymentLink ?? '#';
 ---
 
 <Layout title={title}>
@@ -66,7 +63,7 @@ const donationUrl = product?.fields.stripePaymentLink ?? '#';
     <div class="post-body container" set:html={html} />
 
     <div class="post-donation">
-      <a href={donationUrl} class="btn-primary">Leuk blog? Doneer ❤</a>
+      <a href="/donate/" class="btn-primary">Leuk blog? Doneer ❤</a>
     </div>
   </article>
 </Layout>

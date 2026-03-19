@@ -1,0 +1,484 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getDonationReactions } from '../../lib/contentful';
+
+const allReactions = await getDonationReactions();
+// Only show entries that are confirmed donations; respect anonymity
+const reactions = allReactions
+  .filter(r => r.fields.donated === true)
+  .sort((a, b) => {
+    const aShown = !a.fields.anonymous && !!a.fields.message;
+    const bShown = !b.fields.anonymous && !!b.fields.message;
+    if (bShown !== aShown) return (bShown ? 1 : 0) - (aShown ? 1 : 0);
+    return (b.fields.dat ?? '').localeCompare(a.fields.dat ?? '');
+  });
+
+const stripeUrl = (import.meta.env.DEV
+  ? import.meta.env.STRIPE_DONATION_TEST_URL
+  : import.meta.env.STRIPE_DONATION_URL) ?? null;
+const INITIAL_VISIBLE = 12;
+---
+
+<Layout title="Doneer">
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Blij met Makers Inc.?</h1>
+      <p class="page-desc"><em>Wat fijn om te horen!</em></p>
+    </div>
+  </div>
+
+  <section class="donate-section">
+    <div class="container donate-layout">
+
+      <div class="donate-intro">
+        <p>Ik hoop dat de blogs, videos en patronen je op weg helpen in je volgende naaiavontuur.</p>
+        <p>Mocht je het leuk vinden, dan kun je via deze pagina een kleine donatie achterlaten. Alle informatie op de site, waaronder de verschillende downloads, zijn en blijven hartstikke gratis, maar mocht je willen doneren dan zou ik dat enorm leuk vinden!</p>
+        <p>Laat eventueel een berichtje achter, en klik op de knop 'Doneer'. Je kunt dan zelf het bedrag kiezen.</p>
+        <p class="donate-signature">— Lotte</p>
+      </div>
+
+      <div class="donate-form-wrap">
+        <div class="donate-card">
+          <h2 class="donate-card-title">Doneer</h2>
+          {stripeUrl ? (
+            <div class="donate-form">
+              <label for="donor-name" class="donate-label">Jouw naam</label>
+              <input
+                type="text"
+                id="donor-name"
+                class="donate-input"
+                placeholder="Bijv. Sanne"
+                autocomplete="name"
+              />
+              <label for="donor-message" class="donate-label">Berichtje <span class="donate-label-optional">(optioneel)</span></label>
+              <textarea
+                id="donor-message"
+                class="donate-input donate-textarea"
+                placeholder="Laat een berichtje achter..."
+                rows="3"
+              ></textarea>
+              <label class="donate-checkbox-label">
+                <input type="checkbox" id="donor-anonymous" class="donate-checkbox" />
+                <span class="donate-checkbox-text">Vink aan als je anoniem wilt blijven</span>
+              </label>
+              <button
+                id="donate-btn"
+                class="btn-primary donate-btn"
+                disabled
+                data-stripe-url={stripeUrl}
+              >
+                Doneer
+              </button>
+              <p class="donate-hint">Je wordt doorgestuurd naar een beveiligde betaalpagina.</p>
+            </div>
+          ) : (
+            <p class="donate-unavailable">Doneren is momenteel niet beschikbaar. Probeer het later opnieuw.</p>
+          )}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {reactions.length > 0 && (
+    <section class="donor-wall">
+      <div class="container">
+        <div class="donor-wall-header">
+          <h2 class="donor-wall-title">Wall of Fame</h2>
+          <p class="donor-wall-desc">Deze lieve donateurs hebben geholpen om deze site in de lucht te houden.</p>
+        </div>
+        <div class="donor-grid" id="donor-grid">
+          {reactions.map((reaction, i) => {
+            const isAnon = reaction.fields.anonymous === true;
+            const displayName = isAnon ? 'Anoniem' : (reaction.fields.name || 'Anoniem');
+            return (
+              <div class:list={['donor-card', { 'donor-card--hidden': i >= INITIAL_VISIBLE }]}>
+                <div class="donor-card-header">
+                  <span class:list={['donor-name', { 'donor-name--anon': isAnon }]}>{displayName}</span>
+                  {reaction.fields.donation !== undefined && (
+                    <span class="donor-amount">&euro;{(reaction.fields.donation as number).toFixed(2)}</span>
+                  )}
+                </div>
+                {!isAnon && reaction.fields.message && (
+                  <p class="donor-message">"{reaction.fields.message}"</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {reactions.length > INITIAL_VISIBLE && (
+          <div class="donor-wall-more">
+            <button id="load-more-btn" class="btn-outline">
+              Meer donateurs zien ({reactions.length - INITIAL_VISIBLE} meer)
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+</Layout>
+
+<script>
+  // Enable donate button only when a name is entered
+  const nameInput = document.getElementById('donor-name') as HTMLInputElement | null;
+  const messageInput = document.getElementById('donor-message') as HTMLTextAreaElement | null;
+  const anonCheckbox = document.getElementById('donor-anonymous') as HTMLInputElement | null;
+  const donateBtn = document.getElementById('donate-btn') as HTMLButtonElement | null;
+
+  // Enable button only when name is filled
+  if (nameInput && donateBtn) {
+    const update = () => {
+      donateBtn.disabled = nameInput.value.trim().length === 0;
+    };
+    nameInput.addEventListener('input', update);
+    update();
+  }
+
+  // On click: create Contentful entry, then redirect to Stripe
+  if (donateBtn) {
+    donateBtn.addEventListener('click', async () => {
+      const stripeUrl = donateBtn.dataset.stripeUrl;
+      if (!stripeUrl) return;
+
+      donateBtn.disabled = true;
+      donateBtn.textContent = 'Even geduld…';
+
+      try {
+        await fetch('/.netlify/functions/create-donation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: nameInput?.value.trim() ?? '',
+            message: messageInput?.value.trim() ?? '',
+            anonymous: anonCheckbox?.checked ?? false,
+          }),
+        });
+      } catch {
+        // If entry creation fails, proceed to Stripe anyway
+      }
+
+      window.location.href = stripeUrl;
+    });
+  }
+
+  // Reveal all hidden donor cards
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      document.querySelectorAll('.donor-card--hidden').forEach(card => {
+        card.classList.remove('donor-card--hidden');
+      });
+      loadMoreBtn.style.display = 'none';
+    });
+  }
+</script>
+
+<style>
+  /* ── Page header ── */
+  .page-header {
+    background: var(--color-primary);
+    padding: 4rem 0;
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-desc {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* ── Donate section ── */
+  .donate-section {
+    padding: 5rem 0;
+  }
+
+  .donate-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  /* ── Intro text ── */
+  .donate-intro-heading {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: var(--color-primary);
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .donate-intro p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: 1.25rem;
+  }
+
+  .donate-signature {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--color-primary);
+    margin-top: 2rem;
+  }
+
+  /* ── Donate card ── */
+  .donate-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .donate-card-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 0.6rem;
+  }
+
+  .donate-card-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+  }
+
+  /* ── Form elements ── */
+  .donate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .donate-label {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-text);
+  }
+
+  .donate-input {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    margin-bottom: 0.6rem;
+  }
+
+  .donate-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(230, 143, 114, 0.18);
+  }
+
+  .donate-input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.7;
+  }
+
+  .donate-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  .donate-label-optional {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .donate-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    margin-top: 0.25rem;
+  }
+
+  .donate-checkbox {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .donate-checkbox-text {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  .donate-btn {
+    display: block;
+    text-align: center;
+    transition: opacity 0.2s, background 0.2s, transform 0.15s;
+  }
+
+  .donate-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .donate-btn:not(:disabled) {
+    cursor: pointer;
+  }
+
+  .donate-hint {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+
+  .donate-unavailable {
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  /* ── Donor wall ── */
+  .donor-wall {
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    padding: 5rem 0;
+  }
+
+  .donor-wall-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .donor-wall-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--color-primary);
+    margin-bottom: 0.6rem;
+  }
+
+  .donor-wall-desc {
+    font-size: 1rem;
+    color: var(--color-muted);
+  }
+
+  .donor-grid {
+    columns: 3;
+    column-gap: 1.25rem;
+  }
+
+  .donor-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    transition: box-shadow 0.2s;
+    break-inside: avoid;
+    margin-bottom: 1.25rem;
+  }
+
+  .donor-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .donor-card--hidden {
+    display: none;
+  }
+
+  .donor-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .donor-name {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-primary);
+  }
+
+  .donor-name--anon {
+    color: var(--color-muted);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .donor-amount {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    background: rgba(46, 87, 68, 0.1);
+    border-radius: 99px;
+    padding: 0.2rem 0.6rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .donor-message {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .donor-wall-more {
+    text-align: center;
+    margin-top: 2.5rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .donate-layout {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .donate-form-wrap {
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .donate-section {
+      padding: 3.5rem 0;
+    }
+
+    .donor-grid {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .donor-grid {
+      columns: 1;
+    }
+
+    .donate-card {
+      padding: 1.75rem;
+    }
+  }
+</style>

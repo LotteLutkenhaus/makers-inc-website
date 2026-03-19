@@ -69,9 +69,12 @@ export interface LegalInformationFields {
 }
 
 export interface DonationReactionFields {
-  name: string;
-  message: string;
-  amount?: number;
+  name?: string;
+  message?: string;
+  donated?: boolean;
+  anonymous?: boolean;
+  dat?: string;
+  donation?: number;
 }
 
 export interface DownloadFields {
@@ -240,4 +243,13 @@ export async function getPersonEntry() {
     locale: LOCALE,
   });
   return entries.items[0] ?? null;
+}
+
+export async function getDonationReactions() {
+  const entries = await client.getEntries<DonationReactionSkeleton>({
+    content_type: 'donationReaction',
+    locale: LOCALE,
+    order: ['-sys.createdAt'],
+  } as any);
+  return entries.items;
 }
