@@ -6,7 +6,9 @@ const allReactions = await getDonationReactions();
 // Only show entries that are confirmed donations; respect anonymity
 const reactions = allReactions.filter(r => r.fields.donated === true);
 
-const stripeUrl = import.meta.env.STRIPE_DONATION_URL ?? null;
+const stripeUrl = (import.meta.env.DEV
+  ? import.meta.env.STRIPE_DONATION_TEST_URL
+  : import.meta.env.STRIPE_DONATION_URL) ?? null;
 const INITIAL_VISIBLE = 12;
 ---
 
