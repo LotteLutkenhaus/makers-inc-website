@@ -1,0 +1,138 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { getProduct } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
+
+export async function getStaticPaths() {
+  const slugs = ['naaipatroon-maxi-wikkelrok'];
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const product = await getProduct(slug);
+
+if (!product) {
+  return Astro.redirect('/shop/');
+}
+
+const imageAsset = product.fields.image as any;
+const imageUrl: string | null = imageAsset?.fields?.file?.url
+  ? `https:${imageAsset.fields.file.url}`
+  : null;
+---
+
+<Layout title={product.fields.name}>
+  <div class="page-header">
+    <div class="container">
+      <a href="/shop/" class="back-link">&larr; Alle patronen</a>
+    </div>
+  </div>
+
+  <section class="product-section">
+    <div class="container product-layout">
+      <div class="product-image-wrap">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            width={600}
+            height={600}
+            alt={product.fields.name}
+            class="product-image"
+          />
+        ) : (
+          <div class="product-image-placeholder"></div>
+        )}
+      </div>
+      <div class="product-details">
+        <h1 class="product-name">{product.fields.name}</h1>
+        {product.fields.description && (
+          <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
+        )}
+        {product.fields.price !== undefined && (
+          <p class="product-price">&euro;{(product.fields.price as number).toFixed(2)}</p>
+        )}
+        {product.fields.stripePaymentLink && (
+          <a href={product.fields.stripePaymentLink} class="btn-primary">Patroon kopen</a>
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    background: var(--color-primary);
+    padding: 1.25rem 0;
+  }
+
+  .back-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: #fff;
+  }
+
+  .product-section {
+    padding: 4rem 0;
+  }
+
+  .product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .product-image-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .product-image-placeholder {
+    aspect-ratio: 1;
+    background: var(--color-border);
+    border-radius: 12px;
+  }
+
+  .product-name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--color-primary);
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .product-desc {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    margin-bottom: 2rem;
+  }
+
+  .product-price {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .product-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

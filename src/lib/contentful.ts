@@ -82,6 +82,7 @@ export interface DownloadFields {
   slug: string;
   description?: string;
   file: any;
+  image?: any;
 }
 
 // NOTE: The AffiliateLink content type does not yet exist in Contentful.
