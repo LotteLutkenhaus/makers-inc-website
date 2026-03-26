@@ -56,10 +56,13 @@ export interface StoryEntryFields {
 
 export interface ProductFields {
   name: string;
+  newName?: string;
   slug: string;
   description?: string;
   price?: number;
   image?: any;
+  mainImage?: any;
+  additionalImages?: any[];
   stripePaymentLink?: string;
 }
 
@@ -79,6 +82,7 @@ export interface DonationReactionFields {
 
 export interface DownloadFields {
   title: string;
+  newName?: string;
   slug: string;
   description?: string;
   file: any;

@@ -6,7 +6,7 @@ import { getProduct, getDownloads } from '../../lib/contentful';
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
 const downloads = await getDownloads();
 
-const productImageAsset = product?.fields.image as any;
+const productImageAsset = (product?.fields.mainImage ?? product?.fields.image) as any;
 const productImageUrl: string | null = productImageAsset?.fields?.file?.url
   ? `https:${productImageAsset.fields.file.url}`
   : null;
@@ -15,8 +15,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
 <Layout title="Patronen">
   <div class="page-header">
     <div class="container">
-      <h1 class="page-title">Patronen</h1>
-      <p class="page-desc"><em>Handgemaakte patronen voor zelfverzekerd naaien.</em></p>
+      <h1 class="page-title">Patronen en downloads</h1>
     </div>
   </div>
 
@@ -33,7 +32,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                     src={productImageUrl}
                     width={480}
                     height={480}
-                    alt={product.fields.name}
+                    alt={product.fields.newName ?? product.fields.name}
                     class="pattern-card-image"
                   />
                 ) : (
@@ -44,7 +43,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                 </span>
               </div>
               <div class="pattern-card-body">
-                <h2 class="pattern-card-title">{product.fields.name}</h2>
+                <h2 class="pattern-card-title">{product.fields.newName ?? product.fields.name}</h2>
                 {product.fields.description && (
                   <p class="pattern-card-desc">{product.fields.description}</p>
                 )}
@@ -68,7 +67,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                       src={dlImageUrl}
                       width={480}
                       height={480}
-                      alt={dl.fields.title}
+                      alt={dl.fields.newName ?? dl.fields.title}
                       class="pattern-card-image"
                     />
                   ) : (
@@ -84,7 +83,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                   <span class="pattern-badge pattern-badge--free">Gratis</span>
                 </div>
                 <div class="pattern-card-body">
-                  <h2 class="pattern-card-title">{dl.fields.title}</h2>
+                  <h2 class="pattern-card-title">{dl.fields.newName ?? dl.fields.title}</h2>
                   {dl.fields.description && (
                     <p class="pattern-card-desc">{dl.fields.description}</p>
                   )}
