@@ -40,7 +40,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                   <div class="pattern-card-image-placeholder"></div>
                 )}
                 <span class="pattern-badge pattern-badge--paid">
-                  &euro;{(product.fields.price as number ?? 0).toFixed(2)}
+                  &euro;{Number(product.fields.price ?? 0).toFixed(2)}
                 </span>
               </div>
               <div class="pattern-card-body">
