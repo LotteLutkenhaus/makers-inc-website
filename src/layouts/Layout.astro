@@ -32,7 +32,12 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     <title>{title} | Makers Inc.</title>
   </head>
   <body>
-    <header class="site-nav" data-inverted={pathname === '/' ? 'true' : 'false'}>
+    <header class="site-nav" data-solid={
+      pathname.startsWith('/blog/') ||
+      pathname.startsWith('/product/') ||
+      pathname.startsWith('/download/')
+        ? 'true' : 'false'
+    }>
       <div class="container nav-inner">
         <a href="/" class="nav-logo">
           {logoUrl ? (
@@ -108,11 +113,11 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     </footer>
 
     <script>
-      // Inverted nav on load → solid green on scroll (homepage only)
+      // Nav starts light/transparent on load → solid green on scroll
       const siteNav = document.querySelector<HTMLElement>('.site-nav');
-      const isHomepage = siteNav?.dataset.inverted === 'true';
+      const isSolid = siteNav?.dataset.solid === 'true';
       function updateNav() {
-        if (!isHomepage) return;
+        if (isSolid) return;
         siteNav?.classList.toggle('site-nav--light', window.scrollY < 10);
       }
       window.addEventListener('scroll', updateNav, { passive: true });
@@ -153,6 +158,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
         background: var(--color-bg);
         box-shadow: 0 1px 0 var(--color-border);
       }
+
 
       .nav-inner {
         display: flex;

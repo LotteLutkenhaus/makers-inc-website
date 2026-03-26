@@ -39,12 +39,6 @@ for (const asset of additionalAssets) {
 ---
 
 <Layout title={displayName}>
-  <div class="page-header">
-    <div class="container">
-      <a href="/shop/" class="back-link">&larr; Alle patronen</a>
-    </div>
-  </div>
-
   <section class="product-section">
     <div class="container product-layout">
 
@@ -127,6 +121,7 @@ for (const asset of additionalAssets) {
 
       <!-- Details -->
       <div class="product-details">
+        <a href="/shop/" class="back-link">&larr; Alle patronen</a>
         <h1 class="product-name">{displayName}</h1>
         {product.fields.description && (
           <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
@@ -261,20 +256,17 @@ for (const asset of additionalAssets) {
 </script>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 1.25rem 0;
-  }
-
   .back-link {
-    color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--color-muted);
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.2s;
   }
 
   .back-link:hover {
-    color: #fff;
+    color: var(--color-accent);
   }
 
   .product-section {
