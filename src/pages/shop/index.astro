@@ -1,56 +1,103 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getProduct } from '../../lib/contentful';
-import { renderMarkdown } from '../../lib/markdown';
+import { getProduct, getDownloads } from '../../lib/contentful';
 
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
+const downloads = await getDownloads();
 
-const imageAsset = product?.fields.image as any;
-const imageUrl: string | null = imageAsset?.fields?.file?.url
-  ? `https:${imageAsset.fields.file.url}`
+const productImageAsset = (product?.fields.mainImage ?? product?.fields.image) as any;
+const productImageUrl: string | null = productImageAsset?.fields?.file?.url
+  ? `https:${productImageAsset.fields.file.url}`
   : null;
 ---
 
 <Layout title="Patronen">
   <div class="page-header">
     <div class="container">
-      <h1 class="page-title">Patronen</h1>
-      <p class="page-desc"><em>Handgemaakte patronen voor zelfverzekerd naaien.</em></p>
+      <h1 class="page-title">Patronen en downloads</h1>
+      <p class="page-desc"><em>Hier zijn alle patronen van Makers Inc. verzameld. De meeste zijn hartstikke gratis te downloaden!</em></p>
     </div>
   </div>
 
-  {product && (
-    <section class="product-section">
-      <div class="container product-layout">
-        <div class="product-image-wrap">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              width={600}
-              height={600}
-              alt={product.fields.name}
-              class="product-image"
-            />
-          ) : (
-            <div class="product-image-placeholder"></div>
-          )}
-        </div>
-        <div class="product-details">
-          <h2 class="product-name">{product.fields.name}</h2>
-          {product.fields.description && (
-            <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
-          )}
-          {product.fields.price !== undefined && (
-            <p class="product-price">&euro;{(product.fields.price as number).toFixed(2)}</p>
-          )}
-          {product.fields.stripePaymentLink && (
-            <a href={product.fields.stripePaymentLink} class="btn-primary">Patroon kopen</a>
-          )}
-        </div>
+  <section class="patterns-section">
+    <div class="container">
+      <div class="patterns-grid">
+
+        {product && (
+          <article class="pattern-card pattern-card--paid">
+            <a href={`/product/${product.fields.slug}/`} class="pattern-card-link">
+              <div class="pattern-card-image-wrap">
+                {productImageUrl ? (
+                  <Image
+                    src={productImageUrl}
+                    width={480}
+                    height={480}
+                    alt={product.fields.newName ?? product.fields.name}
+                    class="pattern-card-image"
+                  />
+                ) : (
+                  <div class="pattern-card-image-placeholder"></div>
+                )}
+                <span class="pattern-badge pattern-badge--paid">
+                  &euro;{Number(product.fields.price ?? 0).toFixed(2)}
+                </span>
+              </div>
+              <div class="pattern-card-body">
+                <h2 class="pattern-card-title">{product.fields.newName ?? product.fields.name}</h2>
+                {product.fields.description && (
+                  <p class="pattern-card-desc">{product.fields.description}</p>
+                )}
+                <span class="pattern-card-cta">Bekijk patroon &rarr;</span>
+              </div>
+            </a>
+          </article>
+        )}
+
+        {downloads.map((dl) => {
+          const dlImageAsset = (dl.fields as any).image as any;
+          const dlImageUrl: string | null = dlImageAsset?.fields?.file?.url
+            ? `https:${dlImageAsset.fields.file.url}`
+            : null;
+          return (
+            <article class="pattern-card pattern-card--free">
+              <a href={`/download/${dl.fields.slug}/`} class="pattern-card-link">
+                <div class="pattern-card-image-wrap">
+                  {dlImageUrl ? (
+                    <Image
+                      src={dlImageUrl}
+                      width={480}
+                      height={480}
+                      alt={dl.fields.newName ?? dl.fields.title}
+                      class="pattern-card-image"
+                    />
+                  ) : (
+                    <div class="pattern-card-image-placeholder pattern-card-image-placeholder--free">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="13" x2="12" y2="17"/>
+                        <line x1="10" y1="15" x2="14" y2="15"/>
+                      </svg>
+                    </div>
+                  )}
+                  <span class="pattern-badge pattern-badge--free">Gratis</span>
+                </div>
+                <div class="pattern-card-body">
+                  <h2 class="pattern-card-title">{dl.fields.newName ?? dl.fields.title}</h2>
+                  {dl.fields.description && (
+                    <p class="pattern-card-desc">{dl.fields.description}</p>
+                  )}
+                  <span class="pattern-card-cta">Bekijk &amp; download &rarr;</span>
+                </div>
+              </a>
+            </article>
+          );
+        })}
+
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 </Layout>
 
 <style>
@@ -74,62 +121,131 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
     color: rgba(255, 255, 255, 0.8);
   }
 
-  .product-section {
-    padding: 4rem 0;
+  .patterns-section {
+    padding: 5rem 0;
   }
 
-  .product-layout {
+  .patterns-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 
-  .product-image-wrap {
-    border-radius: 12px;
+  .pattern-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .pattern-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .pattern-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .pattern-card-image-wrap {
+    position: relative;
+    aspect-ratio: 1;
     overflow: hidden;
   }
 
-  .product-image {
+  .pattern-card-image {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
+    transition: transform 0.3s;
   }
 
-  .product-image-placeholder {
-    aspect-ratio: 1;
+  .pattern-card:hover .pattern-card-image {
+    transform: scale(1.03);
+  }
+
+  .pattern-card-image-placeholder {
+    width: 100%;
+    height: 100%;
     background: var(--color-border);
-    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .product-name {
+  .pattern-card-image-placeholder--free {
+    background: rgba(46, 87, 68, 0.07);
+    color: var(--color-primary);
+    opacity: 0.6;
+  }
+
+  .pattern-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 99px;
+    padding: 0.3rem 0.8rem;
+    letter-spacing: 0.02em;
+  }
+
+  .pattern-badge--paid {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .pattern-badge--free {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .pattern-card-body {
+    padding: 1.5rem;
+  }
+
+  .pattern-card-title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-size: 1.2rem;
     color: var(--color-primary);
-    margin-bottom: 1.25rem;
-    line-height: 1.2;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
   }
 
-  .product-desc {
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--color-text);
-    margin-bottom: 2rem;
+  .pattern-card-desc {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  .product-price {
-    font-family: var(--font-heading);
-    font-size: 2rem;
+  .pattern-card-cta {
+    font-size: 0.9rem;
     font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: 1.5rem;
+    color: var(--color-accent);
+    letter-spacing: 0.01em;
   }
 
-  @media (max-width: 768px) {
-    .product-layout {
+  @media (max-width: 900px) {
+    .patterns-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .patterns-grid {
       grid-template-columns: 1fr;
-      gap: 2rem;
     }
   }
 </style>
