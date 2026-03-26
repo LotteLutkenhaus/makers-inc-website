@@ -27,12 +27,6 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
 ---
 
 <Layout title={title}>
-  <div class="page-header">
-    <div class="container">
-      <a href="/shop/" class="back-link">&larr; Alle patronen</a>
-    </div>
-  </div>
-
   <section class="download-section">
     <div class="container download-layout">
 
@@ -50,6 +44,7 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
         )}
 
         <div class="download-info">
+          <a href="/shop/" class="back-link">&larr; Alle patronen</a>
           <h1 class="download-title">{title}</h1>
           {description && <div class="download-desc" set:html={renderMarkdown(description)} />}
 
@@ -75,20 +70,17 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 1.25rem 0;
-  }
-
   .back-link {
-    color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--color-muted);
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.2s;
   }
 
   .back-link:hover {
-    color: #fff;
+    color: var(--color-accent);
   }
 
   .download-section {

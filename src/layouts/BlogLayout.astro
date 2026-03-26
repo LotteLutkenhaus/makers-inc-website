@@ -55,8 +55,7 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
     )}
 
     <div class="post-header container">
-      <a href={backHref} class="post-back">&larr; Terug naar {backLabel}</a>
-      {categoryName && <span class="post-category">{categoryName}</span>}
+      {categoryName && <a href={backHref} class="post-category">{categoryName}</a>}
       <h1 class="post-title">{title}</h1>
     </div>
 
@@ -74,8 +73,8 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
   }
 
   .post-hero {
-    max-width: 860px;
-    margin: 2.5rem auto 0;
+    max-width: 680px;
+    margin: 2rem auto 0;
     padding: 0 1.5rem;
     aspect-ratio: 3 / 2;
     overflow: hidden;
@@ -95,19 +94,6 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
     margin: 2.5rem auto;
   }
 
-  .post-back {
-    display: inline-block;
-    margin-bottom: 1rem;
-    color: var(--color-muted);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-  }
-
-  .post-back:hover {
-    color: var(--color-accent);
-  }
-
   .post-category {
     display: block;
     margin-bottom: 0.5rem;
@@ -116,6 +102,12 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .post-category:hover {
+    opacity: 0.75;
   }
 
   .post-title {
