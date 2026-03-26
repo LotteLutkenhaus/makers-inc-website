@@ -6,12 +6,7 @@ const allReactions = await getDonationReactions();
 // Only show entries that are confirmed donations; respect anonymity
 const reactions = allReactions
   .filter(r => r.fields.donated === true)
-  .sort((a, b) => {
-    const aShown = !a.fields.anonymous && !!a.fields.message;
-    const bShown = !b.fields.anonymous && !!b.fields.message;
-    if (bShown !== aShown) return (bShown ? 1 : 0) - (aShown ? 1 : 0);
-    return (b.fields.dat ?? '').localeCompare(a.fields.dat ?? '');
-  });
+  .sort((a, b) => (b.fields.dat ?? '').localeCompare(a.fields.dat ?? ''));
 
 const stripeUrl = (import.meta.env.DEV
   ? import.meta.env.STRIPE_DONATION_TEST_URL
@@ -94,12 +89,12 @@ const INITIAL_VISIBLE = 12;
             return (
               <div class:list={['donor-card', { 'donor-card--hidden': i >= INITIAL_VISIBLE }]}>
                 <div class="donor-card-header">
-                  <span class:list={['donor-name', { 'donor-name--anon': isAnon }]}>{displayName}</span>
+                  <span class="donor-name">{displayName}</span>
                   {reaction.fields.donation !== undefined && (
                     <span class="donor-amount">&euro;{(reaction.fields.donation as number).toFixed(2)}</span>
                   )}
                 </div>
-                {!isAnon && reaction.fields.message && (
+                {reaction.fields.message && (
                   <p class="donor-message">"{reaction.fields.message}"</p>
                 )}
               </div>
