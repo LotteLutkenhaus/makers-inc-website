@@ -80,7 +80,7 @@ body {
   font-weight: 600;
   font-size: clamp(2rem, 5vw, 3rem);
   color: var(--color-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 3rem;
   border-left: 3px solid var(--color-accent);
   padding-left: 0.75rem;
 }
@@ -88,12 +88,4 @@ body {
 .no-title-accent .page-title {
   border-left: none;
   padding-left: 0;
-}
-
-.page-desc {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: 1.1rem;
-  color: var(--color-muted);
-  margin-bottom: 2rem;
 }

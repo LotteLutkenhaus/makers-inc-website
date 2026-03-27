@@ -10,10 +10,9 @@ const posts = await getBlogPostsByCategory('Tips & Tricks');
   <section class="posts-section">
     <div class="container">
       <h1 class="page-title">Tips en Tricks</h1>
-      <p class="page-desc">Toe aan wat meer uitdaging? Hier vind je de handigste hacks, en leuke tutorials om jouw skills een level-up te geven!</p>
       <div class="posts-grid">
         {posts.map((post) => (
-          <BlogCard post={post} />
+          <BlogCard post={post} showCategory={false} />
         ))}
       </div>
     </div>

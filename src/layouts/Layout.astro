@@ -80,7 +80,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
       </nav>
     </div>
 
-    <main class:list={[{ 'no-title-accent': !titleAccent }]}>
+    <main class:list={[{ 'no-title-accent': !titleAccent, 'interior-page': pathname !== '/' }]}>
       <slot />
     </main>
 
@@ -288,6 +288,11 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
 
       .nav-overlay-link:hover {
         color: var(--color-accent);
+      }
+
+      /* ── Interior page spacing ── */
+      .interior-page {
+        padding-top: 3.5rem;
       }
 
       /* ── Footer ── */
