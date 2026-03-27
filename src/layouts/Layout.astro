@@ -33,12 +33,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     <title>{title} | Makers Inc.</title>
   </head>
   <body>
-    <header class="site-nav" data-solid={
-      pathname.startsWith('/blog/') ||
-      pathname.startsWith('/product/') ||
-      pathname.startsWith('/download/')
-        ? 'true' : 'false'
-    }>
+    <header class="site-nav" data-solid={pathname !== '/' ? 'true' : 'false'}>
       <div class="container nav-inner">
         <a href="/" class="nav-logo">
           {logoUrl ? (
