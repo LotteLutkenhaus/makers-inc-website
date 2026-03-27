@@ -13,15 +13,10 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
 ---
 
 <Layout title="Patronen">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Patronen en downloads</h1>
-      <p class="page-desc"><em>Hier zijn alle patronen van Makers Inc. verzameld. De meeste zijn hartstikke gratis te downloaden!</em></p>
-    </div>
-  </div>
-
   <section class="patterns-section">
     <div class="container">
+      <h1 class="page-title">Patronen en downloads</h1>
+      <p class="page-desc">Hier zijn alle patronen van Makers Inc. verzameld. De meeste zijn hartstikke gratis te downloaden!</p>
       <div class="patterns-grid">
 
         {product && (
@@ -102,7 +97,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
 
 <style>
   .patterns-section {
-    padding: 5rem 0;
+    padding: 2.5rem 0 5rem;
   }
 
   .patterns-grid {

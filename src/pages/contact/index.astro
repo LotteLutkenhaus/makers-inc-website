@@ -17,10 +17,8 @@ const text = fields?.longerTextNew as string | undefined;
 ---
 
 <Layout title="Contact">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Contact</h1>
-    </div>
+  <div class="container page-intro">
+    <h1 class="page-title">Contact</h1>
   </div>
 
   <div class="contact-wrapper container">
@@ -55,6 +53,11 @@ const text = fields?.longerTextNew as string | undefined;
 </Layout>
 
 <style>
+  .page-intro {
+    padding-top: 2.5rem;
+    padding-bottom: 0.5rem;
+  }
+
   .contact-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;

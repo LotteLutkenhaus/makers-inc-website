@@ -7,13 +7,8 @@ const legal = await getLegalInformation('Privacyverklaring');
 ---
 
 <Layout title="Privacyverklaring">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">{legal?.fields.title ?? 'Privacyverklaring'}</h1>
-    </div>
-  </div>
-
   <div class="page-content container">
+    <h1 class="page-title">{legal?.fields.title ?? 'Privacyverklaring'}</h1>
     {legal ? (
       <div class="legal-body" set:html={renderMarkdown(legal.fields.content ?? '')} />
     ) : (
@@ -25,7 +20,7 @@ const legal = await getLegalInformation('Privacyverklaring');
 <style>
   .page-content {
     max-width: 680px;
-    margin: 4rem auto;
+    margin: 2.5rem auto 4rem;
     font-size: 1.05rem;
     line-height: 1.8;
     color: var(--color-text);

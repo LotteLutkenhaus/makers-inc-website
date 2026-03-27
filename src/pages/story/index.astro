@@ -7,13 +7,8 @@ const entries = await getStoryEntries();
 ---
 
 <Layout title="Het verhaal van Makers Inc.">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Het verhaal van Makers Inc.</h1>
-    </div>
-  </div>
-
   <div class="page-content container">
+    <h1 class="page-title">Het verhaal van Makers Inc.</h1>
     {entries.map((entry) => (
       <article class="story-entry">
         <h2 class="story-entry-title">{entry.fields.title}</h2>
@@ -27,7 +22,7 @@ const entries = await getStoryEntries();
 <style>
   .page-content {
     max-width: 680px;
-    margin: 4rem auto;
+    margin: 2.5rem auto 4rem;
   }
 
   .story-entry {
