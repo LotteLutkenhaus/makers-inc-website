@@ -102,13 +102,16 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
           )}
         </a>
         <nav class="footer-nav" aria-label="Footernavigatie">
-          <a href="/over/">Over</a>
           <a href="/contact/">Contact</a>
-          <a href="/donate/">Doneer</a>
           <a href="/privacyverklaring/">Privacyverklaring</a>
           <a href="/algemene-voorwaarden/">Algemene voorwaarden</a>
         </nav>
-        <p class="footer-copy">&copy; {new Date().getFullYear()} Makers Inc.</p>
+        <div class="footer-right">
+          <a href="https://www.instagram.com/makersinc.nl/" class="footer-instagram" aria-label="Volg Makers Inc. op Instagram" rel="noopener noreferrer" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </a>
+          <p class="footer-copy">&copy; {new Date().getFullYear()} Makers Inc.</p>
+        </div>
       </div>
     </footer>
 
@@ -313,7 +316,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
       }
 
       .footer-logo-image {
-        height: 32px;
+        height: 48px;
         width: auto;
         display: block;
       }
@@ -334,6 +337,24 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
       }
 
       .footer-nav a:hover {
+        color: var(--color-accent);
+      }
+
+      .footer-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .footer-instagram {
+        color: rgba(255, 255, 255, 0.75);
+        display: flex;
+        align-items: center;
+        transition: color 0.2s;
+      }
+
+      .footer-instagram:hover {
         color: var(--color-accent);
       }
 
