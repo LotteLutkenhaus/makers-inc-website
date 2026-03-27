@@ -42,6 +42,7 @@ export interface SiteInfoFields {
   siteName: string;
   heroText?: string;
   longerText?: string;
+  longerTextNew?: string;
   heroImage?: any;
   frontPageImage?: any;
   logoWide?: any;

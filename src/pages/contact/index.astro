@@ -1,5 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { getSiteInfoById } from '../../lib/contentful';
+
+const CONTACT_ENTRY_ID = 'WaU9i1Tx2ilqzsrbmefm9';
+const entry = await getSiteInfoById(CONTACT_ENTRY_ID);
+const fields = entry?.fields;
+
+const image = fields?.frontPageImage as any;
+const imageUrl = image?.fields?.file?.url ? `https:${image.fields.file.url}` : null;
+const imageWidth = image?.fields?.file?.details?.image?.width ?? 800;
+const imageHeight = image?.fields?.file?.details?.image?.height ?? 900;
+const imageAlt = image?.fields?.description ?? image?.fields?.title ?? 'Lotte van Makers Inc.';
+
+const text = fields?.longerTextNew as string | undefined;
 ---
 
 <Layout title="Contact">
@@ -9,8 +23,34 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </div>
 
-  <div class="page-content container">
-    <p>Neem contact op met Makers Inc. via e-mail of sociale media.</p>
+  <div class="contact-wrapper container">
+    {imageUrl && (
+      <div class="contact-image">
+        <Image
+          src={imageUrl}
+          width={imageWidth}
+          height={imageHeight}
+          alt={imageAlt}
+          class="photo"
+        />
+      </div>
+    )}
+
+    <div class="contact-content">
+      {text && <p class="contact-text">{text}</p>}
+
+      <div class="contact-links">
+        <a href="mailto:lotte@makersinc.nl" class="contact-link email-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          lotte@makersinc.nl
+        </a>
+
+        <a href="https://www.instagram.com/makersinc.nl/" class="contact-link instagram-link" rel="noopener noreferrer" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          @makersinc.nl
+        </a>
+      </div>
+    </div>
   </div>
 </Layout>
 
@@ -27,11 +67,63 @@ import Layout from '../../layouts/Layout.astro';
     color: #fff;
   }
 
-  .page-content {
-    max-width: 680px;
-    margin: 4rem auto;
-    font-size: 1.05rem;
+  .contact-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    padding-block: 5rem;
+    max-width: 1000px;
+  }
+
+  .contact-image {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .contact-text {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text);
+    margin-bottom: 2rem;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .contact-link:hover {
+    opacity: 0.75;
+  }
+
+  @media (max-width: 680px) {
+    .contact-wrapper {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-block: 3rem;
+    }
   }
 </style>
