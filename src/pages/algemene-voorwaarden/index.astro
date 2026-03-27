@@ -7,13 +7,8 @@ const legal = await getLegalInformation('Algemene Voorwaarden');
 ---
 
 <Layout title="Algemene voorwaarden">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">{legal?.fields.title ?? 'Algemene voorwaarden'}</h1>
-    </div>
-  </div>
-
   <div class="page-content container">
+    <h1 class="page-title">{legal?.fields.title ?? 'Algemene voorwaarden'}</h1>
     {legal ? (
       <div class="legal-body" set:html={renderMarkdown(legal.fields.content ?? '')} />
     ) : (
@@ -23,21 +18,9 @@ const legal = await getLegalInformation('Algemene Voorwaarden');
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 4rem 0;
-  }
-
-  .page-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #fff;
-  }
-
   .page-content {
     max-width: 680px;
-    margin: 4rem auto;
+    margin: 2.5rem auto 4rem;
     font-size: 1.05rem;
     line-height: 1.8;
     color: var(--color-text);

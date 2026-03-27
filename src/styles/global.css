@@ -73,3 +73,19 @@ body {
   color: #fff;
   transform: translateY(-2px);
 }
+
+/* ── Page title (shared across all inner pages) ── */
+.page-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--color-primary);
+  margin-bottom: 3rem;
+  border-left: 3px solid var(--color-accent);
+  padding-left: 0.75rem;
+}
+
+.no-title-accent .page-title {
+  border-left: none;
+  padding-left: 0;
+}

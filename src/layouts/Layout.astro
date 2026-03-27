@@ -5,9 +5,10 @@ import { getSiteInfoById } from '../lib/contentful';
 
 interface Props {
   title: string;
+  titleAccent?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, titleAccent = true } = Astro.props;
 const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
@@ -32,12 +33,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     <title>{title} | Makers Inc.</title>
   </head>
   <body>
-    <header class="site-nav" data-solid={
-      pathname.startsWith('/blog/') ||
-      pathname.startsWith('/product/') ||
-      pathname.startsWith('/download/')
-        ? 'true' : 'false'
-    }>
+    <header class="site-nav" data-solid={pathname !== '/' ? 'true' : 'false'}>
       <div class="container nav-inner">
         <a href="/" class="nav-logo">
           {logoUrl ? (
@@ -84,7 +80,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
       </nav>
     </div>
 
-    <main>
+    <main class:list={[{ 'no-title-accent': !titleAccent, 'interior-page': pathname !== '/' }]}>
       <slot />
     </main>
 
@@ -292,6 +288,11 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
 
       .nav-overlay-link:hover {
         color: var(--color-accent);
+      }
+
+      /* ── Interior page spacing ── */
+      .interior-page {
+        padding-top: 3.5rem;
       }
 
       /* ── Footer ── */

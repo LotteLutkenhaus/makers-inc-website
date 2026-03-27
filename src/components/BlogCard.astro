@@ -10,9 +10,10 @@ interface Props {
       blogCategory?: unknown[];
     };
   };
+  showCategory?: boolean;
 }
 
-const { post } = Astro.props;
+const { post, showCategory = true } = Astro.props;
 const { title, slug, heroImage, blogCategory } = post.fields;
 
 const raw = blogCategory as any;
@@ -41,10 +42,10 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
       <div class="card-image-placeholder"></div>
     )}
   </div>
-  {categoryName && (
+  {showCategory && categoryName && (
     <span class="card-category">{categoryName}</span>
   )}
-  <h3 class="card-title">{title}</h3>
+  <h3 class:list={['card-title', { 'card-title--no-category': !showCategory }]}>{title}</h3>
   <span class="card-arrow">Lees meer &rarr;</span>
 </a>
 
@@ -101,6 +102,10 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
 
   .card-title {
     margin: 0.5rem 1rem;
+  }
+
+  .card-title--no-category {
+    margin-top: 1.25rem;
     font-family: var(--font-heading);
     font-weight: 600;
     font-size: 1.15rem;

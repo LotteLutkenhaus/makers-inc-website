@@ -7,13 +7,8 @@ const entries = await getStoryEntries();
 ---
 
 <Layout title="Het verhaal van Makers Inc.">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Het verhaal van Makers Inc.</h1>
-    </div>
-  </div>
-
   <div class="page-content container">
+    <h1 class="page-title">Het verhaal van Makers Inc.</h1>
     {entries.map((entry) => (
       <article class="story-entry">
         <h2 class="story-entry-title">{entry.fields.title}</h2>
@@ -25,21 +20,9 @@ const entries = await getStoryEntries();
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 4rem 0;
-  }
-
-  .page-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #fff;
-  }
-
   .page-content {
     max-width: 680px;
-    margin: 4rem auto;
+    margin: 2.5rem auto 4rem;
   }
 
   .story-entry {

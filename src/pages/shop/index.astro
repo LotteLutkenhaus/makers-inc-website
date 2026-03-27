@@ -13,15 +13,9 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
 ---
 
 <Layout title="Patronen">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Patronen en downloads</h1>
-      <p class="page-desc"><em>Hier zijn alle patronen van Makers Inc. verzameld. De meeste zijn hartstikke gratis te downloaden!</em></p>
-    </div>
-  </div>
-
   <section class="patterns-section">
     <div class="container">
+      <h1 class="page-title">Patronen en downloads</h1>
       <div class="patterns-grid">
 
         {product && (
@@ -101,28 +95,8 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 4rem 0;
-  }
-
-  .page-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #fff;
-    margin-bottom: 0.75rem;
-  }
-
-  .page-desc {
-    font-family: var(--font-heading);
-    font-style: italic;
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
   .patterns-section {
-    padding: 5rem 0;
+    padding: 2.5rem 0 5rem;
   }
 
   .patterns-grid {

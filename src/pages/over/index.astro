@@ -20,8 +20,8 @@ const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : 
       <div class="post-hero">
         <Image
           src={personImageUrl}
-          width={860}
-          height={573}
+          width={680}
+          height={453}
           alt={person?.fields.name ?? 'Makers Inc.'}
           class="post-hero-image"
           loading="eager"
@@ -45,10 +45,9 @@ const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : 
   }
 
   .post-hero {
-    max-width: 860px;
+    max-width: 680px;
     margin: 2.5rem auto 0;
     padding: 0 1.5rem;
-    aspect-ratio: 3 / 2;
     overflow: hidden;
     border-radius: 8px;
   }
@@ -130,14 +129,4 @@ const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : 
     margin-bottom: 0.5rem;
   }
 
-  @media (max-width: 768px) {
-    .post-hero {
-      margin-top: 1.5rem;
-      padding: 0;
-      border-radius: 0;
-    }
-    .post-hero-image {
-      border-radius: 0;
-    }
-  }
 </style>

@@ -17,10 +17,8 @@ const text = fields?.longerTextNew as string | undefined;
 ---
 
 <Layout title="Contact">
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Contact</h1>
-    </div>
+  <div class="container page-intro">
+    <h1 class="page-title">Contact</h1>
   </div>
 
   <div class="contact-wrapper container">
@@ -55,16 +53,8 @@ const text = fields?.longerTextNew as string | undefined;
 </Layout>
 
 <style>
-  .page-header {
-    background: var(--color-primary);
-    padding: 4rem 0;
-  }
-
-  .page-title {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: #fff;
+  .page-intro {
+    padding-top: 2.5rem;
   }
 
   .contact-wrapper {
@@ -72,7 +62,7 @@ const text = fields?.longerTextNew as string | undefined;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
     align-items: center;
-    padding-block: 5rem;
+    padding-block: 0 5rem;
     max-width: 1000px;
   }
 
