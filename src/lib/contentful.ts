@@ -39,6 +39,7 @@ export interface PersonFields {
 }
 
 export interface SiteInfoFields {
+  title?: string;
   siteName: string;
   heroText?: string;
   longerText?: string;
