@@ -7,6 +7,7 @@ import { renderMarkdown } from '../../lib/markdown';
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
 const downloads = await getDownloads();
 
+const productName = (product?.fields.newName ?? product?.fields.name) as string;
 const productImageAsset = (product?.fields.mainImage ?? product?.fields.image) as any;
 const productImageUrl: string | null = productImageAsset?.fields?.file?.url
   ? `https:${productImageAsset.fields.file.url}`
@@ -28,7 +29,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                     src={productImageUrl}
                     width={720}
                     height={540}
-                    alt={product.fields.newName ?? product.fields.name}
+                    alt={productName}
                     class="pattern-card-image"
                   />
                 ) : (
@@ -39,7 +40,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                 </span>
               </div>
               <div class="pattern-card-body">
-                <h2 class="pattern-card-title">{product.fields.newName ?? product.fields.name}</h2>
+                <h2 class="pattern-card-title">{productName}</h2>
                 {product.fields.description && (
                   <div class="pattern-card-desc" set:html={renderMarkdown(String(product.fields.description))} />
                 )}
@@ -51,7 +52,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
         )}
 
         {downloads.map((dl) => {
-          const dlImageAsset = (dl.fields as any).image as any;
+          const dlImageAsset = (dl.fields as any).image;
           const dlImageUrl: string | null = dlImageAsset?.fields?.file?.url
             ? `https:${dlImageAsset.fields.file.url}`
             : null;
@@ -148,7 +149,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
     overflow: hidden;
   }
 
-  .pattern-price-body {
+  .pattern-card--paid .pattern-price-body {
     display: inline-block;
     font-family: var(--font-heading);
     font-weight: 700;
@@ -295,7 +296,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
       font-size: 1.3rem;
     }
 
-    .pattern-price-body {
+    .pattern-card--paid .pattern-price-body {
       display: none;
     }
   }
