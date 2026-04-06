@@ -1,65 +1,16 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import SuccessPage from '../../components/SuccessPage.astro';
 import { getSiteInfoById } from '../../lib/contentful';
-import { renderMarkdown } from '../../lib/markdown';
 
 const entry = await getSiteInfoById('5Ite2g1cYhPUrDiMTQdk71');
 const title = entry?.fields.title ?? 'Bedankt!';
 const description = (entry?.fields.longerText ?? entry?.fields.heroText) as string | undefined;
 ---
 
-<Layout title={title}>
-  <div class="container success-wrapper">
-    <div class="success-icon" aria-hidden="true">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-      </svg>
-    </div>
-    <h1 class="success-title">{title}</h1>
-    {description && (
-      <div class="success-body" set:html={renderMarkdown(description)} />
-    )}
-    <a href="/donate/" class="btn-primary">Naar het donatieoverzicht</a>
-  </div>
-</Layout>
-
-<style>
-  .success-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding-block: 5rem;
-    max-width: 640px;
-  }
-
-  .success-icon {
-    color: var(--color-accent);
-    margin-bottom: 1.5rem;
-  }
-
-  .success-title {
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 700;
-    color: var(--color-primary);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-  }
-
-  .success-body {
-    font-family: var(--font-body);
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--color-text);
-    margin-bottom: 2.5rem;
-  }
-
-  .success-body :global(p) {
-    margin-bottom: 1rem;
-  }
-
-  .success-body :global(p:last-child) {
-    margin-bottom: 0;
-  }
-</style>
+<SuccessPage
+  title={title}
+  description={description}
+  backHref="/donate/"
+  backLabel="Naar het donatieoverzicht"
+  icon="heart"
+/>
