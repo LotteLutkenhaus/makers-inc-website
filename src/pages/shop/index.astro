@@ -2,10 +2,12 @@
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getProduct, getDownloads } from '../../lib/contentful';
+import { renderMarkdown } from '../../lib/markdown';
 
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
 const downloads = await getDownloads();
 
+const productName = (product?.fields.newName ?? product?.fields.name) as string;
 const productImageAsset = (product?.fields.mainImage ?? product?.fields.image) as any;
 const productImageUrl: string | null = productImageAsset?.fields?.file?.url
   ? `https:${productImageAsset.fields.file.url}`
@@ -25,9 +27,9 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                 {productImageUrl ? (
                   <Image
                     src={productImageUrl}
-                    width={480}
-                    height={480}
-                    alt={product.fields.newName ?? product.fields.name}
+                    width={720}
+                    height={540}
+                    alt={productName}
                     class="pattern-card-image"
                   />
                 ) : (
@@ -38,10 +40,11 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
                 </span>
               </div>
               <div class="pattern-card-body">
-                <h2 class="pattern-card-title">{product.fields.newName ?? product.fields.name}</h2>
+                <h2 class="pattern-card-title">{productName}</h2>
                 {product.fields.description && (
-                  <p class="pattern-card-desc">{product.fields.description}</p>
+                  <div class="pattern-card-desc" set:html={renderMarkdown(String(product.fields.description))} />
                 )}
+                <span class="pattern-price-body">&euro;{Number(product.fields.price ?? 0).toFixed(2)}</span>
                 <span class="pattern-card-cta">Bekijk patroon &rarr;</span>
               </div>
             </a>
@@ -49,7 +52,7 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
         )}
 
         {downloads.map((dl) => {
-          const dlImageAsset = (dl.fields as any).image as any;
+          const dlImageAsset = (dl.fields as any).image;
           const dlImageUrl: string | null = dlImageAsset?.fields?.file?.url
             ? `https:${dlImageAsset.fields.file.url}`
             : null;
@@ -103,6 +106,61 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+  }
+
+  /* Featured hero: paid product spans full width */
+  .pattern-card--paid {
+    grid-column: 1 / -1;
+  }
+
+  .pattern-card--paid .pattern-card-link {
+    display: flex;
+    flex-direction: row;
+    min-height: 340px;
+  }
+
+  .pattern-card--paid .pattern-card-image-wrap {
+    width: 45%;
+    flex-shrink: 0;
+    aspect-ratio: auto;
+  }
+
+  .pattern-card--paid .pattern-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 3rem;
+  }
+
+  .pattern-card--paid .pattern-card-title {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .pattern-card--paid .pattern-badge--paid {
+    display: none;
+  }
+
+  .pattern-card--paid .pattern-card-desc {
+    font-size: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pattern-card--paid .pattern-price-body {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .pattern-card--paid .pattern-card-cta {
+    font-size: 1rem;
+    margin-top: 0.5rem;
   }
 
   .pattern-card {
@@ -214,6 +272,32 @@ const productImageUrl: string | null = productImageAsset?.fields?.file?.url
   @media (max-width: 900px) {
     .patterns-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pattern-card--paid .pattern-card-link {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    .pattern-card--paid .pattern-card-image-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+    }
+
+    .pattern-card--paid .pattern-badge--paid {
+      display: inline-block;
+    }
+
+    .pattern-card--paid .pattern-card-body {
+      padding: 1.5rem;
+    }
+
+    .pattern-card--paid .pattern-card-title {
+      font-size: 1.3rem;
+    }
+
+    .pattern-card--paid .pattern-price-body {
+      display: none;
     }
   }
 
