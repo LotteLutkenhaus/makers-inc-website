@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { renderMarkdown } from '../lib/markdown';
+
+interface Props {
+  title: string;
+  content: string | null;
+  fallbackMessage: string;
+}
+
+const { title, content, fallbackMessage } = Astro.props;
+---
+
+<Layout title={title}>
+  <div class="page-content container">
+    <h1 class="page-title">{title}</h1>
+    {content ? (
+      <div class="legal-body" set:html={renderMarkdown(content)} />
+    ) : (
+      <p>{fallbackMessage}</p>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    max-width: 680px;
+    margin: 2.5rem auto 4rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .legal-body :global(h2) {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-body :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .legal-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .legal-body :global(ul),
+  .legal-body :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-body :global(li) {
+    margin-bottom: 0.4rem;
+  }
+</style>

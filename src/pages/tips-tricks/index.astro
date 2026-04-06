@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import BlogCard from '../../components/BlogCard.astro';
+import PostsGrid from '../../components/PostsGrid.astro';
 import { getBlogPostsByCategory } from '../../lib/contentful';
 
 const posts = await getBlogPostsByCategory('Tips & Tricks');
@@ -10,11 +10,7 @@ const posts = await getBlogPostsByCategory('Tips & Tricks');
   <section class="posts-section">
     <div class="container">
       <h1 class="page-title">Tips en Tricks</h1>
-      <div class="posts-grid">
-        {posts.map((post) => (
-          <BlogCard post={post} showCategory={false} />
-        ))}
-      </div>
+      <PostsGrid posts={posts} />
     </div>
   </section>
 </Layout>
@@ -22,23 +18,5 @@ const posts = await getBlogPostsByCategory('Tips & Tricks');
 <style>
   .posts-section {
     padding: 2.5rem 0 4rem;
-  }
-
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 900px) {
-    .posts-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 600px) {
-    .posts-grid {
-      grid-template-columns: 1fr;
-    }
   }
 </style>

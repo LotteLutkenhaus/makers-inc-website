@@ -1,46 +1,12 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import LegalPage from '../../components/LegalPage.astro';
 import { getLegalInformation } from '../../lib/contentful';
-import { renderMarkdown } from '../../lib/markdown';
 
 const legal = await getLegalInformation('Algemene Voorwaarden');
 ---
 
-<Layout title="Algemene voorwaarden">
-  <div class="page-content container">
-    <h1 class="page-title">{legal?.fields.title ?? 'Algemene voorwaarden'}</h1>
-    {legal ? (
-      <div class="legal-body" set:html={renderMarkdown(legal.fields.content ?? '')} />
-    ) : (
-      <p>De algemene voorwaarden zijn momenteel niet beschikbaar.</p>
-    )}
-  </div>
-</Layout>
-
-<style>
-  .page-content {
-    max-width: 680px;
-    margin: 2.5rem auto 4rem;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: var(--color-text);
-  }
-
-  .legal-body :global(h2) {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 1.3rem;
-    color: var(--color-primary);
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .legal-body :global(p) {
-    margin-bottom: 1rem;
-  }
-
-  .legal-body :global(a) {
-    color: var(--color-accent);
-    text-decoration: underline;
-  }
-</style>
+<LegalPage
+  title={legal?.fields.title ?? 'Algemene voorwaarden'}
+  content={legal?.fields.content ?? null}
+  fallbackMessage="De algemene voorwaarden zijn momenteel niet beschikbaar."
+/>
