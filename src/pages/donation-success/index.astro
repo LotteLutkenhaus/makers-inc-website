@@ -1,0 +1,16 @@
+---
+import SuccessPage from '../../components/SuccessPage.astro';
+import { getSiteInfoById } from '../../lib/contentful';
+
+const entry = await getSiteInfoById('5Ite2g1cYhPUrDiMTQdk71');
+const title = entry?.fields.title ?? 'Bedankt!';
+const description = (entry?.fields.longerText ?? entry?.fields.heroText) as string | undefined;
+---
+
+<SuccessPage
+  title={title}
+  description={description}
+  backHref="/donate/"
+  backLabel="Naar het donatieoverzicht"
+  icon="heart"
+/>

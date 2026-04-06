@@ -1,0 +1,16 @@
+---
+import SuccessPage from '../../components/SuccessPage.astro';
+import { getSiteInfoById } from '../../lib/contentful';
+
+const entry = await getSiteInfoById('6oMCOv5yyzrAPQZMFwETYF');
+const title = entry?.fields.title ?? 'Bestelling geplaatst!';
+const description = (entry?.fields.longerText ?? entry?.fields.heroText) as string | undefined;
+---
+
+<SuccessPage
+  title={title}
+  description={description}
+  backHref="/shop/"
+  backLabel="Terug naar de shop"
+  icon="check"
+/>
