@@ -64,6 +64,4 @@ const jsonLd = isArticle
 <meta property="og:site_name" content="Makers Inc." />
 {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
 
-<meta name="twitter:card" content="summary_large_image" />
-
 {isArticle && jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
