@@ -11,28 +11,35 @@ function escAttr(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Fetches the original pixel dimensions for a Contentful image URL.
-// Asset ID is parsed from the URL path: /{spaceId}/{assetId}/{hash}/{filename}
-async function getOriginalDimensions(url: string): Promise<{ width: number; height: number } | null> {
+// Fetches the original pixel dimensions for a Contentful image URL and stores
+// them in dimCache. Asset ID is parsed from the URL path:
+//   /{spaceId}/{assetId}/{hash}/{filename}
+async function prefetchDimensions(url: string): Promise<void> {
   let assetId: string;
   try {
     assetId = new URL(url).pathname.split('/')[2];
   } catch {
-    return null;
+    return;
   }
-  if (!assetId) return null;
-
-  if (dimCache.has(assetId)) return dimCache.get(assetId)!;
+  if (!assetId || dimCache.has(assetId)) return;
 
   try {
     const asset = await getAssetById(assetId);
     const image = (asset?.fields as any)?.file?.details?.image;
-    if (!image?.width || !image?.height) return null;
-    const dims = { width: image.width as number, height: image.height as number };
-    dimCache.set(assetId, dims);
-    return dims;
+    if (image?.width && image?.height) {
+      dimCache.set(assetId, { width: image.width as number, height: image.height as number });
+    }
   } catch {
-    return null;
+    // Dimension fetch failed — image will render without explicit width/height.
+  }
+}
+
+function getCachedDims(url: string): { width: number; height: number } | undefined {
+  try {
+    const assetId = new URL(url).pathname.split('/')[2];
+    return assetId ? dimCache.get(assetId) : undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -49,6 +56,19 @@ function isContentfulImageUrl(url: string): boolean {
 const marked = new Marked({
   async: true,
   breaks: true,
+
+  // walkTokens runs before rendering and supports async, so we pre-fetch all
+  // Contentful image dimensions here. By the time renderer.image runs, every
+  // dimension is already in dimCache and the renderer can stay synchronous.
+  walkTokens: async (token) => {
+    if (token.type !== 'image') return;
+    const raw: string = (token as any).href ?? '';
+    const src = raw.startsWith('//') ? `https:${raw}` : raw;
+    if (isContentfulImageUrl(src) && !isVideoUrl(src)) {
+      await prefetchDimensions(src);
+    }
+  },
+
   renderer: {
     link({ href, title, text }) {
       const titleAttr = title ? ` title="${title}"` : '';
@@ -64,7 +84,7 @@ const marked = new Marked({
       return `<a href="${href}"${titleAttr}>${text}</a>`;
     },
 
-    async image({ href, text, title }) {
+    image({ href, text, title }) {
       if (!href) return `<img alt="${escAttr(text ?? '')}">`;
 
       const src = href.startsWith('//') ? `https:${href}` : href;
@@ -78,13 +98,12 @@ const marked = new Marked({
 
       const optimisedSrc = contentfulImageUrl(src, 'body');
 
-      // For Contentful images, fetch original dimensions so the browser can
-      // reserve the right space before the image loads (CLS = 0).
+      // Dimensions were pre-fetched by walkTokens; read from cache.
+      // Contentful won't upscale, so the delivered width is min(original, 800).
       let dimAttrs = '';
       if (isContentfulImageUrl(src)) {
-        const orig = await getOriginalDimensions(src);
+        const orig = getCachedDims(src);
         if (orig) {
-          // Contentful won't upscale, so the delivered width is min(original, 800).
           const w = Math.min(orig.width, 800);
           const h = Math.round(orig.height * (w / orig.width));
           dimAttrs = ` width="${w}" height="${h}"`;
