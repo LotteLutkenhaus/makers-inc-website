@@ -12,6 +12,9 @@
   "dependencies": {
     "@astrojs/check": "^0.9.6",
     "@astrojs/sitemap": "^3.7.0",
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource-variable/nunito": "^5.2.7",
+    "@fontsource/unica-one": "^5.2.8",
     "astro": "^5.17.1",
     "contentful": "^11.10.5",
     "marked": "^17.0.4",
