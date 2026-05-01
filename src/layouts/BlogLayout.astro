@@ -1,7 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import Layout from './Layout.astro';
+import HeroImage from '../components/HeroImage.astro';
 import { renderMarkdown } from '../lib/markdown';
+import { contentfulImageUrl } from '../lib/contentful-image';
 
 interface Props {
   post: {
@@ -17,7 +18,7 @@ interface Props {
 const { post } = Astro.props;
 const { title, heroImage, blogCategory, body } = post.fields;
 
-const html = renderMarkdown(body ?? '');
+const html = await renderMarkdown(body ?? '');
 
 const raw = blogCategory as any;
 const categories: any[] = raw ? (Array.isArray(raw) ? raw : [raw]) : [];
@@ -30,27 +31,20 @@ function categoryHref(name: string): string {
 }
 
 const backHref = categoryHref(categoryName);
-const backLabel = categoryName || 'Blog';
 
 const imageAsset = heroImage as any;
-const imageUrl: string | null = imageAsset?.fields?.file?.url
-  ? `https:${imageAsset.fields.file.url}`
-  : null;
+const rawImageUrl: string | null = imageAsset?.fields?.file?.url ?? null;
+const ogImage: string | undefined = rawImageUrl
+  ? contentfulImageUrl(rawImageUrl, 'og')
+  : undefined;
 
 ---
 
-<Layout title={title}>
+<Layout title={title} {ogImage}>
   <article class="blog-post">
-    {imageUrl && (
+    {heroImage && (
       <div class="post-hero">
-        <Image
-          src={imageUrl}
-          width={1200}
-          height={675}
-          alt={title}
-          class="post-hero-image"
-          loading="eager"
-        />
+        <HeroImage asset={heroImage} alt={title} />
       </div>
     )}
 
@@ -81,7 +75,7 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
     border-radius: 8px;
   }
 
-  .post-hero-image {
+  .post-hero :global(.hero-image) {
     width: 100%;
     height: 100%;
     object-fit: cover;
