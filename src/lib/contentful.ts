@@ -49,13 +49,6 @@ export interface SiteInfoFields {
   logoWide?: any;
 }
 
-export interface StoryEntryFields {
-  title: string;
-  body: string;
-  date: string;
-  image?: any;
-}
-
 export interface ProductFields {
   name: string;
   newName?: string;
@@ -123,11 +116,6 @@ export interface PersonSkeleton extends EntrySkeletonType {
 export interface SiteInfoSkeleton extends EntrySkeletonType {
   contentTypeId: 'siteInfo';
   fields: SiteInfoFields;
-}
-
-export interface StoryEntrySkeleton extends EntrySkeletonType {
-  contentTypeId: 'storyOfMakersInc';
-  fields: StoryEntryFields;
 }
 
 export interface ProductSkeleton extends EntrySkeletonType {
@@ -224,15 +212,6 @@ export async function getProduct(slug: string) {
     'fields.slug': slug,
   } as any);
   return entries.items[0] ?? null;
-}
-
-export async function getStoryEntries() {
-  const entries = await client.getEntries<StoryEntrySkeleton>({
-    content_type: 'storyOfMakersInc',
-    locale: LOCALE,
-    order: ['fields.date'],
-  } as any);
-  return entries.items;
 }
 
 export async function getLegalInformation(title: string) {
