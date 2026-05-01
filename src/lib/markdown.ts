@@ -23,8 +23,10 @@ function preprocessMarkdown(md: string): string {
   // Convert `youtube:URL` (backtick-wrapped) to responsive iframe embeds
   return md.replace(
     /`youtube:(https?:\/\/[^\s`]+)`/g,
-    (_, url) =>
-      `<div class="youtube-embed"><iframe src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
+    (_, url) => {
+      const noCookieUrl = url.replace(/\/\/(www\.)?youtube\.com\//, '//www.youtube-nocookie.com/');
+      return `<div class="youtube-embed"><iframe src="${noCookieUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    }
   );
 }
 
