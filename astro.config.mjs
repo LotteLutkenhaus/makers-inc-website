@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, passthroughImageService } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
@@ -9,6 +9,9 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [sitemap()],
   image: {
-    domains: ['images.ctfassets.net'],
+    // Delegate all image optimisation to Contentful's Images API.
+    // <Image> outputs the URL as-is; no build-time downloads or reprocessing.
+    service: passthroughImageService(),
+    domains: ['images.ctfassets.net', 'images.contentful.com'],
   },
 });
