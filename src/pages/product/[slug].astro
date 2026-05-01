@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getProduct } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
+import { contentfulImageUrl } from '../../lib/contentful-image';
 
 export async function getStaticPaths() {
   const slugs = ['naaipatroon-maxi-wikkelrok'];
@@ -30,12 +31,15 @@ const additionalAssets = (product.fields.additionalImages ?? []) as any[];
 
 const allImages: { url: string; alt: string }[] = [];
 if (mainImageAsset?.fields?.file?.url) {
-  allImages.push({ url: `https:${mainImageAsset.fields.file.url}`, alt: displayName });
+  const raw: string = mainImageAsset.fields.file.url;
+  allImages.push({ url: raw.startsWith('//') ? `https:${raw}` : raw, alt: displayName });
 }
 for (const asset of additionalAssets) {
-  const url = asset?.fields?.file?.url;
-  if (url) allImages.push({ url: `https:${url}`, alt: displayName });
+  const raw: string | undefined = asset?.fields?.file?.url;
+  if (raw) allImages.push({ url: raw.startsWith('//') ? `https:${raw}` : raw, alt: displayName });
 }
+
+const productDescHtml = await renderMarkdown(product.fields.description ?? '');
 ---
 
 <Layout title={displayName}>
@@ -52,16 +56,17 @@ for (const asset of additionalAssets) {
                   <div
                     class="carousel-slide"
                     data-index={i}
-                    data-src={`${img.url}?w=1200&fm=webp`}
+                    data-src={contentfulImageUrl(img.url, 'hero')}
                     data-alt={img.alt}
                   >
                     <Image
-                      src={img.url}
+                      src={contentfulImageUrl(img.url, 'body')}
                       width={600}
                       height={600}
                       alt={img.alt}
                       class="carousel-image"
                       loading={i === 0 ? 'eager' : 'lazy'}
+                      fetchpriority={i === 0 ? 'high' : undefined}
                     />
                   </div>
                 ))}
@@ -106,7 +111,7 @@ for (const asset of additionalAssets) {
                 aria-label={`Afbeelding ${i + 1}`}
               >
                 <Image
-                  src={img.url}
+                  src={contentfulImageUrl(img.url, 'body')}
                   width={120}
                   height={120}
                   alt={img.alt}
@@ -123,8 +128,8 @@ for (const asset of additionalAssets) {
       <div class="product-details">
         <a href="/shop/" class="back-link">&larr; Alle patronen</a>
         <h1 class="product-name">{displayName}</h1>
-        {product.fields.description && (
-          <div class="product-desc" set:html={renderMarkdown(product.fields.description)} />
+        {productDescHtml && (
+          <div class="product-desc" set:html={productDescHtml} />
         )}
         {product.fields.price !== undefined && (
           <p class="product-price">&euro;{(product.fields.price as number).toFixed(2)}</p>

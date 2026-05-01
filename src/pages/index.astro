@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import BlogCard from '../components/BlogCard.astro';
 import { Image } from 'astro:assets';
 import { getBlogPosts, getSiteInfoById, getProduct } from '../lib/contentful';
+import { contentfulImageUrl } from '../lib/contentful-image';
 
 const siteInfo = await getSiteInfoById('SYJXpMEX8IfUNLU5gBqae');
 const posts = await getBlogPosts();
@@ -10,9 +11,8 @@ const recentPosts = posts.slice(0, 6);
 const product = await getProduct('naaipatroon-maxi-wikkelrok');
 
 const heroAsset = siteInfo?.fields.frontPageImage as any;
-const heroImageUrl: string | null = heroAsset?.fields?.file?.url
-  ? `https:${heroAsset.fields.file.url}`
-  : null;
+const heroRawUrl: string | null = heroAsset?.fields?.file?.url ?? null;
+const heroImageUrl: string | null = heroRawUrl ? contentfulImageUrl(heroRawUrl, 'hero') : null;
 
 const productPrice = product?.fields.price as number | undefined;
 ---
@@ -39,6 +39,7 @@ const productPrice = product?.fields.price as number | undefined;
             height={906}
             style="width:100%;height:100%;object-fit:cover;object-position:center 15%;"
             loading="eager"
+            fetchpriority="high"
           />
         )}
         <div class="image-mat-label">Makers Inc.</div>

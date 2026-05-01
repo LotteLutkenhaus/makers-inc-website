@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getDownloads } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
+import { contentfulImageUrl } from '../../lib/contentful-image';
 import DonateCard from '../../components/DonateCard.astro';
 
 export async function getStaticPaths() {
@@ -22,9 +23,9 @@ const fileUrl = file?.fields?.file?.url ?? '#';
 const fullFileUrl = fileUrl.startsWith('//') ? `https:${fileUrl}` : fileUrl;
 
 const imageAsset = (download.fields as any).image as any;
-const imageUrl: string | null = imageAsset?.fields?.file?.url
-  ? `https:${imageAsset.fields.file.url}`
-  : null;
+const imageRawUrl: string | null = imageAsset?.fields?.file?.url ?? null;
+const imageUrl: string | null = imageRawUrl ? contentfulImageUrl(imageRawUrl, 'body') : null;
+const descHtml = description ? await renderMarkdown(description) : '';
 ---
 
 <Layout title={title}>
@@ -47,7 +48,7 @@ const imageUrl: string | null = imageAsset?.fields?.file?.url
         <div class="download-info">
           <a href="/shop/" class="back-link">&larr; Alle patronen</a>
           <h1 class="download-title">{title}</h1>
-          {description && <div class="download-desc" set:html={renderMarkdown(description)} />}
+          {descHtml && <div class="download-desc" set:html={descHtml} />}
 
           <a href={fullFileUrl} download class="btn-primary download-btn">
             Downloaden
