@@ -1,0 +1,68 @@
+---
+import { contentfulImageUrl } from '../lib/contentful-image';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalUrl: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  datePublished?: string;
+  dateModified?: string;
+}
+
+const {
+  title,
+  description = 'Makers Inc. — naaitips en tutorials voor beginners.',
+  canonicalUrl,
+  ogImage,
+  ogType = 'website',
+  datePublished,
+  dateModified,
+} = Astro.props;
+
+const ogImageUrl = ogImage ? contentfulImageUrl(ogImage, 'og') : undefined;
+const isArticle = ogType === 'article';
+
+const jsonLd = isArticle
+  ? JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      image: ogImageUrl,
+      author: {
+        '@type': 'Person',
+        name: 'Lotte',
+        url: 'https://www.makersinc.nl/over/',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Makers Inc.',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.makersinc.nl/Logo-1-Transparent.png',
+        },
+      },
+      datePublished,
+      dateModified,
+      description,
+      url: canonicalUrl,
+    })
+  : null;
+---
+
+<title>{title} | Makers Inc.</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content="nl_NL" />
+<meta property="og:site_name" content="Makers Inc." />
+{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+
+{isArticle && jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}

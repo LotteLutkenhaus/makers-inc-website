@@ -2,7 +2,6 @@
 import Layout from './Layout.astro';
 import HeroImage from '../components/HeroImage.astro';
 import { renderMarkdown } from '../lib/markdown';
-import { contentfulImageUrl } from '../lib/contentful-image';
 
 interface Props {
   post: {
@@ -11,12 +10,14 @@ interface Props {
       heroImage?: unknown;
       blogCategory?: unknown[];
       body: string;
+      description?: string;
+      publishDate?: string;
     };
   };
 }
 
 const { post } = Astro.props;
-const { title, heroImage, blogCategory, body } = post.fields;
+const { title, heroImage, blogCategory, body, description, publishDate } = post.fields;
 
 const html = await renderMarkdown(body ?? '');
 
@@ -33,14 +34,11 @@ function categoryHref(name: string): string {
 const backHref = categoryHref(categoryName);
 
 const imageAsset = heroImage as any;
-const rawImageUrl: string | null = imageAsset?.fields?.file?.url ?? null;
-const ogImage: string | undefined = rawImageUrl
-  ? contentfulImageUrl(rawImageUrl, 'og')
-  : undefined;
+const ogImage: string | undefined = imageAsset?.fields?.file?.url ?? undefined;
 
 ---
 
-<Layout title={title} {ogImage}>
+<Layout title={title} {description} {ogImage} ogType="article" datePublished={publishDate}>
   <article class="blog-post">
     {heroImage && (
       <div class="post-hero">
