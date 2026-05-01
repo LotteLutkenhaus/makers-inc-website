@@ -3,15 +3,15 @@ import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getPersonEntry } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
+import { contentfulImageUrl } from '../../lib/contentful-image';
 
 const person = await getPersonEntry();
 
 const personAsset = person?.fields.image as any;
-const personImageUrl: string | null = personAsset?.fields?.file?.url
-  ? `https:${personAsset.fields.file.url}`
-  : null;
+const personRawUrl: string | null = personAsset?.fields?.file?.url ?? null;
+const personImageUrl: string | null = personRawUrl ? contentfulImageUrl(personRawUrl, 'hero') : null;
 
-const html = person?.fields.shortBio ? renderMarkdown(person.fields.shortBio) : '';
+const html = person?.fields.shortBio ? await renderMarkdown(person.fields.shortBio) : '';
 ---
 
 <Layout title="Over mij">

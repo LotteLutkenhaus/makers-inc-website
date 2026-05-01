@@ -6,9 +6,10 @@ import { getSiteInfoById } from '../lib/contentful';
 interface Props {
   title: string;
   titleAccent?: boolean;
+  ogImage?: string;
 }
 
-const { title, titleAccent = true } = Astro.props;
+const { title, titleAccent = true, ogImage } = Astro.props;
 const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
@@ -31,6 +32,7 @@ const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | Makers Inc.</title>
+    {ogImage && <meta property="og:image" content={ogImage} />}
   </head>
   <body>
     <header class="site-nav" data-solid={pathname !== '/' ? 'true' : 'false'}>

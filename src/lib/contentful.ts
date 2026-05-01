@@ -260,3 +260,8 @@ export async function getDonationReactions() {
   } as any);
   return entries.items;
 }
+
+export async function getAssetById(id: string) {
+  const asset = await client.getAsset(id, { locale: LOCALE } as any);
+  return asset ?? null;
+}

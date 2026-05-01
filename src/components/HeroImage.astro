@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import { contentfulImageUrl } from '../lib/contentful-image';
+
+interface Props {
+  asset: any;
+  alt: string;
+}
+
+const { asset, alt } = Astro.props;
+
+const rawUrl: string = asset?.fields?.file?.url ?? '';
+const src = contentfulImageUrl(rawUrl, 'hero');
+
+const origWidth: number = asset?.fields?.file?.details?.image?.width ?? 1200;
+const origHeight: number = asset?.fields?.file?.details?.image?.height ?? 675;
+const width = 1200;
+const height = Math.round(origHeight * (width / origWidth));
+---
+
+<Image
+  src={src}
+  {width}
+  {height}
+  {alt}
+  loading="eager"
+  fetchpriority="high"
+  class="hero-image"
+/>

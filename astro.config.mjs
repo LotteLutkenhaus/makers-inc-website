@@ -9,6 +9,6 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [sitemap()],
   image: {
-    domains: ['images.ctfassets.net'],
+    domains: ['images.ctfassets.net', 'images.contentful.com'],
   },
 });

@@ -4,16 +4,17 @@ import { getStoryEntries } from '../../lib/contentful';
 import { renderMarkdown } from '../../lib/markdown';
 
 const entries = await getStoryEntries();
+const renderedBodies = await Promise.all(entries.map((e) => renderMarkdown(e.fields.body ?? '')));
 ---
 
 <Layout title="Het verhaal van Makers Inc.">
   <div class="page-content container">
     <h1 class="page-title">Het verhaal van Makers Inc.</h1>
-    {entries.map((entry) => (
+    {entries.map((entry, i) => (
       <article class="story-entry">
         <h2 class="story-entry-title">{entry.fields.title}</h2>
         <time class="story-entry-date" datetime={entry.fields.date}>{entry.fields.date}</time>
-        <div class="story-entry-body" set:html={renderMarkdown(entry.fields.body ?? '')} />
+        <div class="story-entry-body" set:html={renderedBodies[i]} />
       </article>
     ))}
   </div>
