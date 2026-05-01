@@ -21,7 +21,6 @@ const {
   dateModified,
 } = Astro.props;
 
-const isProd = ['www.makersinc.nl', 'makersinc.nl'].includes(Astro.url.host);
 const ogImageUrl = ogImage ? contentfulImageUrl(ogImage, 'og') : undefined;
 const isArticle = ogType === 'article';
 
@@ -55,7 +54,7 @@ const jsonLd = isArticle
 <title>{title} | Makers Inc.</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />
-{!isProd && <meta name="robots" content="noindex, nofollow" />}
+<meta name="robots" content="noindex, nofollow" />
 
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
