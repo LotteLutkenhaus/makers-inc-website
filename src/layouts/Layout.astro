@@ -145,9 +145,11 @@ const logoHeight = 96;
       const isSolid = siteNav?.dataset.solid === 'true';
       function updateNav() {
         if (isSolid) return;
-        siteNav?.classList.toggle('site-nav--light', window.scrollY < 10);
+        const isDesktop = window.innerWidth > 768;
+        siteNav?.classList.toggle('site-nav--light', isDesktop && window.scrollY < 10);
       }
       window.addEventListener('scroll', updateNav, { passive: true });
+      window.addEventListener('resize', updateNav, { passive: true });
       updateNav();
 
       const hamburger = document.getElementById('nav-hamburger');
