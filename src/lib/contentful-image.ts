@@ -16,11 +16,12 @@
  *   'og'        → w=1200, h=630, fm=webp, q=85, fit=fill (Open Graph / social)
  *   'body'      → w=800, fm=webp, q=80                  (inline body images)
  *   'body-wide' → w=1200, fm=webp, q=80                 (wide body images)
+ *   'logo'      → w=250, fm=webp, q=90                  (nav/footer logo, 2× retina at 125px display width)
  */
 
 const CONTENTFUL_IMAGE_HOSTS = new Set(['images.ctfassets.net', 'images.contentful.com']);
 
-export type ImagePreset = 'hero' | 'thumbnail' | 'og' | 'body' | 'body-wide';
+export type ImagePreset = 'hero' | 'thumbnail' | 'og' | 'body' | 'body-wide' | 'logo';
 
 const PRESETS: Record<ImagePreset, Record<string, string>> = {
   'hero':       { w: '1200', fm: 'webp', q: '85' },
@@ -28,6 +29,7 @@ const PRESETS: Record<ImagePreset, Record<string, string>> = {
   'og':         { w: '1200', h: '630', fm: 'webp', q: '85', fit: 'fill' },
   'body':       { w: '800', fm: 'webp', q: '80' },
   'body-wide':  { w: '1200', fm: 'webp', q: '80' },
+  'logo':       { w: '250', fm: 'webp', q: '90' },
 };
 
 export function isVideoUrl(url: string): boolean {

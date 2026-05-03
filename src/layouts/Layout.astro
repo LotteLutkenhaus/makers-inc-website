@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 import { getSiteInfoById } from '../lib/contentful';
+import { contentfulImageUrl } from '../lib/contentful-image';
 import SEO from '../components/SEO.astro';
 import nunitoLatinUrl from '@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2?url';
 import frauncesLatinUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
@@ -28,11 +29,12 @@ function isActive(href: string): boolean {
 
 const siteInfo = await getSiteInfoById('SYJXpMEX8IfUNLU5gBqae');
 const logoAsset = siteInfo?.fields.logoWide as any;
-const logoUrl: string | null = logoAsset?.fields?.file?.url
+const rawLogoUrl: string | null = logoAsset?.fields?.file?.url
   ? `https:${logoAsset.fields.file.url}`
   : null;
-const logoWidth: number = logoAsset?.fields?.file?.details?.image?.width ?? 200;
-const logoHeight: number = logoAsset?.fields?.file?.details?.image?.height ?? 60;
+const logoUrl: string | null = rawLogoUrl ? contentfulImageUrl(rawLogoUrl, 'logo') : null;
+const logoWidth = 250;
+const logoHeight = 96;
 ---
 
 <!doctype html>
