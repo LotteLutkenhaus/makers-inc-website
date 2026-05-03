@@ -8,18 +8,16 @@ interface Props {
       title: string;
       slug: string;
       heroImage?: unknown;
-      blogCategory?: unknown[];
+      newBlogCategory?: unknown;
     };
   };
   showCategory?: boolean;
 }
 
 const { post, showCategory = true } = Astro.props;
-const { title, slug, heroImage, blogCategory } = post.fields;
+const { title, slug, heroImage, newBlogCategory } = post.fields;
 
-const raw = blogCategory as any;
-const categories: any[] = raw ? (Array.isArray(raw) ? raw : [raw]) : [];
-const categoryName: string = categories[0]?.fields?.category ?? '';
+const categoryName: string = (newBlogCategory as any)?.fields?.category ?? '';
 
 const href = `/blog/${slug}/`;
 

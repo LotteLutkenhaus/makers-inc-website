@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostsGrid from '../../components/PostsGrid.astro';
+import { getBlogPostsByCategory } from '../../lib/contentful';
+
+const posts = await getBlogPostsByCategory('Tutorials');
+---
+
+<Layout title="Tutorials">
+  <section class="posts-section">
+    <div class="container">
+      <h1 class="page-title">Tutorials</h1>
+      <PostsGrid posts={posts} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .posts-section {
+    padding: 2.5rem 0 4rem;
+  }
+</style>
