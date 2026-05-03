@@ -115,13 +115,32 @@ const marked = new Marked({
   },
 });
 
+function extractYouTubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') {
+      return u.pathname.slice(1).split('/')[0] || null;
+    }
+    if (u.hostname.includes('youtube.com')) {
+      const v = u.searchParams.get('v');
+      if (v) return v;
+      const parts = u.pathname.split('/');
+      const idx = parts.findIndex(p => p === 'embed' || p === 'v');
+      if (idx !== -1 && parts[idx + 1]) return parts[idx + 1];
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function preprocessMarkdown(md: string): string {
-  // Convert `youtube:URL` (backtick-wrapped) to responsive iframe embeds
   return md.replace(
     /`youtube:(https?:\/\/[^\s`]+)`/g,
     (_, url) => {
-      const noCookieUrl = url.replace(/\/\/(www\.)?youtube\.com\//, '//www.youtube-nocookie.com/');
-      return `<div class="youtube-embed"><iframe src="${noCookieUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+      const videoId = extractYouTubeId(url);
+      if (!videoId) return '';
+      return `<div class="youtube-embed"><lite-youtube videoid="${videoId}"></lite-youtube></div>`;
     }
   );
 }
