@@ -9,6 +9,7 @@ interface Props {
   ogType?: 'website' | 'article';
   datePublished?: string;
   dateModified?: string;
+  publisherLogoUrl?: string;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   ogType = 'website',
   datePublished,
   dateModified,
+  publisherLogoUrl,
 } = Astro.props;
 
 const ogImageUrl = ogImage ? contentfulImageUrl(ogImage, 'og') : undefined;
@@ -38,10 +40,12 @@ const jsonLd = isArticle
       publisher: {
         '@type': 'Organization',
         name: 'Makers Inc.',
-        logo: {
-          '@type': 'ImageObject',
-          url: 'https://www.makersinc.nl/Logo-1-Transparent.png',
-        },
+        ...(publisherLogoUrl && {
+          logo: {
+            '@type': 'ImageObject',
+            url: publisherLogoUrl,
+          },
+        }),
       },
       datePublished,
       dateModified,
