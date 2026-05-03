@@ -2,15 +2,19 @@
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getSiteInfoById } from '../../lib/contentful';
+import { contentfulImageUrl } from '../../lib/contentful-image';
 
 const CONTACT_ENTRY_ID = 'WaU9i1Tx2ilqzsrbmefm9';
 const entry = await getSiteInfoById(CONTACT_ENTRY_ID);
 const fields = entry?.fields;
 
 const image = fields?.frontPageImage as any;
-const imageUrl = image?.fields?.file?.url ? `https:${image.fields.file.url}` : null;
-const imageWidth = image?.fields?.file?.details?.image?.width ?? 800;
-const imageHeight = image?.fields?.file?.details?.image?.height ?? 900;
+const rawImageUrl = image?.fields?.file?.url ? `https:${image.fields.file.url}` : null;
+const imageUrl = rawImageUrl ? contentfulImageUrl(rawImageUrl, 'body') : null;
+const rawWidth: number = image?.fields?.file?.details?.image?.width ?? 800;
+const rawHeight: number = image?.fields?.file?.details?.image?.height ?? 900;
+const imageWidth = Math.min(rawWidth, 800);
+const imageHeight = Math.round(rawHeight * (imageWidth / rawWidth));
 const imageAlt = image?.fields?.description ?? image?.fields?.title ?? 'Lotte van Makers Inc.';
 
 const text = fields?.longerTextNew as string | undefined;
