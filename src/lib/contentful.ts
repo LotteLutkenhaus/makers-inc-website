@@ -10,6 +10,12 @@ const LOCALE = 'nl-NL';
 // ─── Content-type interfaces ───────────────────────────────
 // Fields are returned as plain values when requesting a single locale.
 
+export type NewBlogCategory = 'Alles voor beginners' | 'Tips & Tricks' | 'Tutorials';
+
+export interface NewBlogCategoryFields {
+  category: NewBlogCategory;
+}
+
 export interface BlogPostFields {
   title: string;
   slug: string;
@@ -17,19 +23,8 @@ export interface BlogPostFields {
   publishDate: string;
   heroImage?: any;
   description?: string;
-  blogCategory?: Entry<BlogCategorySkeleton> | Entry<BlogCategorySkeleton>[];
-  type?: Entry<BlogTypeSkeleton>[];
+  newBlogCategory?: Entry<NewBlogCategorySkeleton>;
   author?: Entry<PersonSkeleton>;
-}
-
-export interface BlogCategoryFields {
-  category: string;
-  slug: string;
-}
-
-export interface BlogTypeFields {
-  name: string;
-  slug: string;
 }
 
 export interface PersonFields {
@@ -98,14 +93,9 @@ export interface BlogPostSkeleton extends EntrySkeletonType {
   fields: BlogPostFields;
 }
 
-export interface BlogCategorySkeleton extends EntrySkeletonType {
-  contentTypeId: 'blogCategory';
-  fields: BlogCategoryFields;
-}
-
-export interface BlogTypeSkeleton extends EntrySkeletonType {
-  contentTypeId: 'blogType';
-  fields: BlogTypeFields;
+export interface NewBlogCategorySkeleton extends EntrySkeletonType {
+  contentTypeId: 'newBlogCategory';
+  fields: NewBlogCategoryFields;
 }
 
 export interface PersonSkeleton extends EntrySkeletonType {
@@ -165,14 +155,9 @@ export async function getBlogPost(slug: string) {
   return entries.items[0] ?? null;
 }
 
-export async function getBlogPostsByCategory(categoryName: string) {
+export async function getBlogPostsByCategory(categoryName: NewBlogCategory) {
   const posts = await getBlogPosts();
-  return posts.filter((post) => {
-    const raw = post.fields.blogCategory;
-    if (!raw) return false;
-    const categories: any[] = Array.isArray(raw) ? raw : [raw];
-    return categories.some((cat: any) => cat.fields?.category === categoryName);
-  });
+  return posts.filter((post) => (post.fields.newBlogCategory as any)?.fields?.category === categoryName);
 }
 
 export async function getDownloads() {
