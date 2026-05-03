@@ -4,9 +4,6 @@ import { Image } from 'astro:assets';
 import { getSiteInfoById } from '../lib/contentful';
 import { contentfulImageUrl } from '../lib/contentful-image';
 import SEO from '../components/SEO.astro';
-import nunitoLatinUrl from '@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2?url';
-import frauncesLatinUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
-import unicaOneLatinUrl from '@fontsource/unica-one/files/unica-one-latin-400-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -43,10 +40,7 @@ const logoHeight = 96;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/favicon.png" type="image/png" />
-    <link rel="preload" href={nunitoLatinUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={frauncesLatinUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={unicaOneLatinUrl} as="font" type="font/woff2" crossorigin />
-    <SEO
+<SEO
       {title}
       {description}
       {canonicalUrl}
