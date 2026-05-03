@@ -77,9 +77,12 @@ const marked = new Marked({
         href = href + '/';
       }
       // Add rel="nofollow sponsored" to Bol.com affiliate links
-      // TODO: Add other affiliates
       if (href && href.includes('partner.bol.com')) {
         return `<a href="${href}"${titleAttr} rel="nofollow sponsored" target="_blank">${text}</a>`;
+      }
+      // Open all other external links in a new tab
+      if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+        return `<a href="${href}"${titleAttr} target="_blank" rel="noopener">${text}</a>`;
       }
       return `<a href="${href}"${titleAttr}>${text}</a>`;
     },
