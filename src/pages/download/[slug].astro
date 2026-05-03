@@ -50,7 +50,7 @@ const descHtml = description ? await renderMarkdown(description) : '';
           <h1 class="download-title">{title}</h1>
           {descHtml && <div class="download-desc" set:html={descHtml} />}
 
-          <a href={fullFileUrl} download class="btn-primary download-btn">
+          <a href={fullFileUrl} download target="_blank" rel="noopener" class="btn-primary download-btn">
             Downloaden
           </a>
         </div>
