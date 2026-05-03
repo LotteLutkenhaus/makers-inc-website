@@ -70,7 +70,9 @@ const marked = new Marked({
   },
 
   renderer: {
-    link({ href, title, text }) {
+    link(token) {
+      let { href, title } = token;
+      const text = this.parser.parseInline(token.tokens);
       const titleAttr = title ? ` title="${title}"` : '';
       // Ensure internal links always have a trailing slash
       if (href && href.startsWith('/') && !href.includes('?') && !href.includes('#') && !href.endsWith('/')) {
