@@ -10,7 +10,5 @@ export default defineConfig({
   integrations: [sitemap()],
   image: {
     domains: ['images.ctfassets.net', 'images.contentful.com'],
-    format: 'webp',
-    quality: 80,
   },
 });
