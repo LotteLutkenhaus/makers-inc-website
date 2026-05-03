@@ -67,6 +67,15 @@ const { title, description, backHref, backLabel, icon } = Astro.props;
     margin-bottom: 2.5rem;
   }
 
+  .success-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .success-body :global(a:hover) {
+    text-decoration: underline;
+  }
+
   .success-body :global(p) {
     margin-bottom: 1rem;
   }
