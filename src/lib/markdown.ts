@@ -70,16 +70,21 @@ const marked = new Marked({
   },
 
   renderer: {
-    link({ href, title, text }) {
+    link(token) {
+      let { href, title } = token;
+      const text = this.parser.parseInline(token.tokens);
       const titleAttr = title ? ` title="${title}"` : '';
       // Ensure internal links always have a trailing slash
       if (href && href.startsWith('/') && !href.includes('?') && !href.includes('#') && !href.endsWith('/')) {
         href = href + '/';
       }
       // Add rel="nofollow sponsored" to Bol.com affiliate links
-      // TODO: Add other affiliates
       if (href && href.includes('partner.bol.com')) {
         return `<a href="${href}"${titleAttr} rel="nofollow sponsored" target="_blank">${text}</a>`;
+      }
+      // Open all other external links in a new tab
+      if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+        return `<a href="${href}"${titleAttr} target="_blank" rel="noopener">${text}</a>`;
       }
       return `<a href="${href}"${titleAttr}>${text}</a>`;
     },
@@ -101,16 +106,21 @@ const marked = new Marked({
       // Dimensions were pre-fetched by walkTokens; read from cache.
       // Contentful won't upscale, so the delivered width is min(original, 800).
       let dimAttrs = '';
+      let styleAttr = '';
       if (isContentfulImageUrl(src)) {
         const orig = getCachedDims(src);
         if (orig) {
           const w = Math.min(orig.width, 800);
           const h = Math.round(orig.height * (w / orig.width));
           dimAttrs = ` width="${w}" height="${h}"`;
+          // Cap very tall portrait images so they don't dominate the page at full content width
+          if (orig.height > orig.width * 1.2) {
+            styleAttr = ` style="max-height:400px;width:auto;max-width:100%;display:block;margin:0 auto"`;
+          }
         }
       }
 
-      return `<img src="${optimisedSrc}" alt="${altAttr}"${titleAttr}${dimAttrs} loading="lazy" decoding="async">`;
+      return `<img src="${optimisedSrc}" alt="${altAttr}"${titleAttr}${dimAttrs}${styleAttr} loading="lazy" decoding="async">`;
     },
   },
 });
