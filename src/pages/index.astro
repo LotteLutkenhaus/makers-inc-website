@@ -207,7 +207,7 @@ const productPrice = product?.fields.price as number | undefined;
 
     .image-mat {
       width: 100%;
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 4 / 5;
       padding: 0;
       border-radius: 0;
       box-shadow: none;
@@ -253,12 +253,6 @@ const productPrice = product?.fields.price as number | undefined;
     padding: 3.5rem 2rem;
   }
 
-  @media (max-width: 768px) {
-    .intro {
-      padding-top: 2rem;
-    }
-  }
-
   .intro-inner {
     position: relative;
     max-width: 720px;
@@ -268,6 +262,16 @@ const productPrice = product?.fields.price as number | undefined;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--color-text);
+  }
+
+   @media (max-width: 768px) {
+    .intro {
+      padding-top: 2rem;
+    }
+
+    .intro-inner {
+      font-size: 0.95rem;
+    }
   }
 
   .intro-inner::before,
@@ -407,6 +411,16 @@ const productPrice = product?.fields.price as number | undefined;
   }
 
   /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .intro {
+      padding-bottom: 1.5rem;
+    }
+
+    .callout-section {
+      padding-top: 2rem;
+    }
+  }
+
   @media (max-width: 640px) {
     .callout-cards {
       grid-template-columns: 1fr;
