@@ -50,6 +50,7 @@ const logoHeight = 96;
       {dateModified}
       publisherLogoUrl={rawLogoUrl ?? undefined}
     />
+    <slot name="head" />
   </head>
   <body>
     <header class="site-nav" data-solid={pathname !== '/' ? 'true' : 'false'}>
